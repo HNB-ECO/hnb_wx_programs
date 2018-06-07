@@ -1,0 +1,330 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.honey.mapper.OrderMapper" >
+  <resultMap id="BaseResultMap" type="com.honey.entity.Order" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="user_id" property="userId" jdbcType="BIGINT" />
+    <result column="order_name" property="orderName" jdbcType="VARCHAR" />
+    <result column="order_status" property="orderStatus" jdbcType="INTEGER" />
+    <result column="total_price" property="totalPrice" jdbcType="DECIMAL" />
+    <result column="total_coin" property="totalCoin" jdbcType="DECIMAL" />
+    <result column="coupon_id" property="couponId" jdbcType="BIGINT" />
+    <result column="payment_type" property="paymentType" jdbcType="VARCHAR" />
+    <result column="platform_id" property="platformId" jdbcType="VARCHAR" />
+    <result column="express" property="express" jdbcType="VARCHAR" />
+    <result column="express_no" property="expressNo" jdbcType="VARCHAR" />
+    <result column="leave_message" property="leaveMessage" jdbcType="VARCHAR" />
+    <result column="address_id" property="addressId" jdbcType="BIGINT" />
+    <result column="address" property="address" jdbcType="VARCHAR" />
+    <result column="contactor" property="contactor" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="is_delete" property="isDelete" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <collection property="workOrders" column="id" fetchType="lazy"
+                javaType="ArrayList" ofType="com.honey.entity.WorkOrder"
+                select="com.honey.mapper.WorkOrderMapper.selectByOrderId">
+    </collection>
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, user_id, order_name, order_status, total_price, total_coin, coupon_id, payment_type, 
+    platform_id, express, express_no, leave_message, address_id, address, contactor, 
+    phone, is_delete, create_time, update_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.honey.entity.OrderExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'false' as QUERYID,
+    <include refid="Base_Column_List" />
+    from t_order
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from t_order
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from t_order
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.honey.entity.Order" >
+    insert into t_order (id, user_id, order_name, 
+      order_status, total_price, total_coin, 
+      coupon_id, payment_type, platform_id, 
+      express, express_no, leave_message, 
+      address_id, address, contactor, 
+      phone, is_delete, create_time, 
+      update_time)
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{orderName,jdbcType=VARCHAR}, 
+      #{orderStatus,jdbcType=INTEGER}, #{totalPrice,jdbcType=DECIMAL}, #{totalCoin,jdbcType=DECIMAL}, 
+      #{couponId,jdbcType=BIGINT}, #{paymentType,jdbcType=VARCHAR}, #{platformId,jdbcType=VARCHAR}, 
+      #{express,jdbcType=VARCHAR}, #{expressNo,jdbcType=VARCHAR}, #{leaveMessage,jdbcType=VARCHAR}, 
+      #{addressId,jdbcType=BIGINT}, #{address,jdbcType=VARCHAR}, #{contactor,jdbcType=VARCHAR}, 
+      #{phone,jdbcType=VARCHAR}, #{isDelete,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.honey.entity.Order" >
+    insert into t_order
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="userId != null" >
+        user_id,
+      </if>
+      <if test="orderName != null" >
+        order_name,
+      </if>
+      <if test="orderStatus != null" >
+        order_status,
+      </if>
+      <if test="totalPrice != null" >
+        total_price,
+      </if>
+      <if test="totalCoin != null" >
+        total_coin,
+      </if>
+      <if test="couponId != null" >
+        coupon_id,
+      </if>
+      <if test="paymentType != null" >
+        payment_type,
+      </if>
+      <if test="platformId != null" >
+        platform_id,
+      </if>
+      <if test="express != null" >
+        express,
+      </if>
+      <if test="expressNo != null" >
+        express_no,
+      </if>
+      <if test="leaveMessage != null" >
+        leave_message,
+      </if>
+      <if test="addressId != null" >
+        address_id,
+      </if>
+      <if test="address != null" >
+        address,
+      </if>
+      <if test="contactor != null" >
+        contactor,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="isDelete != null" >
+        is_delete,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="userId != null" >
+        #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="orderName != null" >
+        #{orderName,jdbcType=VARCHAR},
+      </if>
+      <if test="orderStatus != null" >
+        #{orderStatus,jdbcType=INTEGER},
+      </if>
+      <if test="totalPrice != null" >
+        #{totalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="totalCoin != null" >
+        #{totalCoin,jdbcType=DECIMAL},
+      </if>
+      <if test="couponId != null" >
+        #{couponId,jdbcType=BIGINT},
+      </if>
+      <if test="paymentType != null" >
+        #{paymentType,jdbcType=VARCHAR},
+      </if>
+      <if test="platformId != null" >
+        #{platformId,jdbcType=VARCHAR},
+      </if>
+      <if test="express != null" >
+        #{express,jdbcType=VARCHAR},
+      </if>
+      <if test="expressNo != null" >
+        #{expressNo,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveMessage != null" >
+        #{leaveMessage,jdbcType=VARCHAR},
+      </if>
+      <if test="addressId != null" >
+        #{addressId,jdbcType=BIGINT},
+      </if>
+      <if test="address != null" >
+        #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="contactor != null" >
+        #{contactor,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="isDelete != null" >
+        #{isDelete,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.honey.entity.OrderExample" resultType="java.lang.Integer" >
+    select count(*) from t_order
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByPrimaryKeySelective" parameterType="com.honey.entity.Order" >
+    update t_order
+    <set >
+      <if test="userId != null" >
+        user_id = #{userId,jdbcType=BIGINT},
+      </if>
+      <if test="orderName != null" >
+        order_name = #{orderName,jdbcType=VARCHAR},
+      </if>
+      <if test="orderStatus != null" >
+        order_status = #{orderStatus,jdbcType=INTEGER},
+      </if>
+      <if test="totalPrice != null" >
+        total_price = #{totalPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="totalCoin != null" >
+        total_coin = #{totalCoin,jdbcType=DECIMAL},
+      </if>
+      <if test="couponId != null" >
+        coupon_id = #{couponId,jdbcType=BIGINT},
+      </if>
+      <if test="paymentType != null" >
+        payment_type = #{paymentType,jdbcType=VARCHAR},
+      </if>
+      <if test="platformId != null" >
+        platform_id = #{platformId,jdbcType=VARCHAR},
+      </if>
+      <if test="express != null" >
+        express = #{express,jdbcType=VARCHAR},
+      </if>
+      <if test="expressNo != null" >
+        express_no = #{expressNo,jdbcType=VARCHAR},
+      </if>
+      <if test="leaveMessage != null" >
+        leave_message = #{leaveMessage,jdbcType=VARCHAR},
+      </if>
+      <if test="addressId != null" >
+        address_id = #{addressId,jdbcType=BIGINT},
+      </if>
+      <if test="address != null" >
+        address = #{address,jdbcType=VARCHAR},
+      </if>
+      <if test="contactor != null" >
+        contactor = #{contactor,jdbcType=VARCHAR},
+      </if>
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="isDelete != null" >
+        is_delete = #{isDelete,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.honey.entity.Order" >
+    update t_order
+    set user_id = #{userId,jdbcType=BIGINT},
+      order_name = #{orderName,jdbcType=VARCHAR},
+      order_status = #{orderStatus,jdbcType=INTEGER},
+      total_price = #{totalPrice,jdbcType=DECIMAL},
+      total_coin = #{totalCoin,jdbcType=DECIMAL},
+      coupon_id = #{couponId,jdbcType=BIGINT},
+      payment_type = #{paymentType,jdbcType=VARCHAR},
+      platform_id = #{platformId,jdbcType=VARCHAR},
+      express = #{express,jdbcType=VARCHAR},
+      express_no = #{expressNo,jdbcType=VARCHAR},
+      leave_message = #{leaveMessage,jdbcType=VARCHAR},
+      address_id = #{addressId,jdbcType=BIGINT},
+      address = #{address,jdbcType=VARCHAR},
+      contactor = #{contactor,jdbcType=VARCHAR},
+      phone = #{phone,jdbcType=VARCHAR},
+      is_delete = #{isDelete,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <insert id="insertIdBack" parameterType="com.honey.entity.Order" useGeneratedKeys="true" keyProperty="id">
+    insert into t_order (id, user_id, order_name,
+    order_status, total_price, total_coin,
+    coupon_id, payment_type, platform_id,
+    express, express_no, leave_message,
+    address_id, address, contactor,
+    phone, is_delete, create_time,
+    update_time)
+    values (#{id,jdbcType=BIGINT}, #{userId,jdbcType=BIGINT}, #{orderName,jdbcType=VARCHAR},
+    #{orderStatus,jdbcType=INTEGER}, #{totalPrice,jdbcType=DECIMAL}, #{totalCoin,jdbcType=DECIMAL},
+    #{couponId,jdbcType=BIGINT}, #{paymentType,jdbcType=VARCHAR}, #{platformId,jdbcType=VARCHAR},
+    #{express,jdbcType=VARCHAR}, #{expressNo,jdbcType=VARCHAR}, #{leaveMessage,jdbcType=VARCHAR},
+    #{addressId,jdbcType=BIGINT}, #{address,jdbcType=VARCHAR}, #{contactor,jdbcType=VARCHAR},
+    #{phone,jdbcType=VARCHAR}, #{isDelete,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP},
+    #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+</mapper>
