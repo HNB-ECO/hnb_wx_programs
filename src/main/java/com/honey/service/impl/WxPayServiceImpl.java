@@ -222,33 +222,28 @@ public class WxPayServiceImpl implements WxPayService {
         /**
          * 更新订单信息
          */
-        try {
-            Order order = orderMapper.selectByPrimaryKey(Long.valueOf(orderIdString));//查询订单
-            order.setUpdateTime(new Date());
-            order.setOrderStatus(Constants.ORDER_STATUS_SHIP);
-            order.setPaymentType(Constants.PAY_TYPE_WX);
-            orderMapper.updateByPrimaryKey(order);
+        Order order = orderMapper.selectByPrimaryKey(Long.valueOf(orderIdString));//查询订单
+        order.setUpdateTime(new Date());
+        order.setOrderStatus(Constants.ORDER_STATUS_SHIP);
+        order.setPaymentType(Constants.PAY_TYPE_WX);
+        orderMapper.updateByPrimaryKey(order);
 
-            List<WorkOrder> workOrders = order.getWorkOrders();
-            for (WorkOrder workOrder : workOrders) {
-                workOrder.setStatus(Constants.WORKORDER_STATUS_SHIP);
-                workOrder.setShipTime(new Date());
-                workOrder.setUpdateTime(new Date());
-                workOrderMapper.updateByPrimaryKey(workOrder);
-                //更新商品销量
-                Goods goods = workOrder.getGoods();
-                Integer amount = workOrder.getAmount();
-                goods.setSales(goods.getSales()+amount.longValue());
-                goodsMapper.updateByPrimaryKeySelective(goods);
-            }
-
-            //创建微信支付流水
-            wxChargeRecord.setOrderId(Long.valueOf(orderIdString));
-            wxChargeRecordMapper.insert(wxChargeRecord);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new Response(Code.OBJECT_UPDATE_STATUS_ERROR);
+        List<WorkOrder> workOrders = order.getWorkOrders();
+        for (WorkOrder workOrder : workOrders) {
+            workOrder.setStatus(Constants.WORKORDER_STATUS_SHIP);
+            workOrder.setPayTime(new Date());
+            workOrder.setUpdateTime(new Date());
+            workOrderMapper.updateByPrimaryKey(workOrder);
+            //更新商品销量
+            Goods goods = workOrder.getGoods();
+            Integer amount = workOrder.getAmount();
+            goods.setSales(goods.getSales() + amount.longValue());
+            goodsMapper.updateByPrimaryKeySelective(goods);
         }
+
+        //创建微信支付流水
+        wxChargeRecord.setOrderId(Long.valueOf(orderIdString));
+        wxChargeRecordMapper.insert(wxChargeRecord);
         return new Response(Code.SUCCESS);
     }
 
@@ -256,51 +251,46 @@ public class WxPayServiceImpl implements WxPayService {
         /**
          * 更新订单信息
          */
-        try {
-            /**
-             * 以下代码应当在微信支付成功后回调函数中执行，在完成支付后修改
-             * 平台扣除price金额的HNB，用户添加price金额的HNB
-             * 添加用户充值流水记录
-             */
-            Long userId = Long.valueOf(userIdString);
-            User user = userMapper.selectByPrimaryKey(userId);
-            Platform platform = platformMapper.selectByPrimaryKey(user.getPlatformId());
-            //扣除平台的数量
-            BigDecimal platformCoin = platform.getCoin();
-            BigDecimal decimalPrice = new BigDecimal(price).divide(new BigDecimal(100));
-            platformCoin = platformCoin.subtract(decimalPrice);//扣除平台HNB
-            platform.setCoin(platformCoin);
-            platformMapper.updateByPrimaryKey(platform);
-            /**
-             * 其中现在暂时不考虑平台HNB不足的情况
-             * TODO
-             */
+        /**
+         * 以下代码应当在微信支付成功后回调函数中执行，在完成支付后修改
+         * 平台扣除price金额的HNB，用户添加price金额的HNB
+         * 添加用户充值流水记录
+         */
+        Long userId = Long.valueOf(userIdString);
+        User user = userMapper.selectByPrimaryKey(userId);
+        Platform platform = platformMapper.selectByPrimaryKey(user.getPlatformId());
+        //扣除平台的数量
+        BigDecimal platformCoin = platform.getCoin();
+        BigDecimal decimalPrice = new BigDecimal(price).divide(new BigDecimal(100));
+        platformCoin = platformCoin.subtract(decimalPrice);//扣除平台HNB
+        platform.setCoin(platformCoin);
+        platformMapper.updateByPrimaryKey(platform);
+        /**
+         * 其中现在暂时不考虑平台HNB不足的情况
+         * TODO
+         */
 
-            //为用户添加HNB
-            BigDecimal userCoin = user.getCoinBalance();
-            userCoin = userCoin.add(decimalPrice);
-            user.setCoinBalance(userCoin);
-            userMapper.updateByPrimaryKey(user);
+        //为用户添加HNB
+        BigDecimal userCoin = user.getCoinBalance();
+        userCoin = userCoin.add(decimalPrice);
+        user.setCoinBalance(userCoin);
+        userMapper.updateByPrimaryKey(user);
 
-            //创建流水
-            ChargeRecord chargeRecord = new ChargeRecord();
-            chargeRecord.setOrderName(Constants.USER_RECHARGE_PREFIX + user.getId() + new Date().getTime());//前缀+ 用户ID +时间戳
-            chargeRecord.setUserId(userId);
-            chargeRecord.setPlatformId(platform.getId());
-            chargeRecord.setCoin(decimalPrice);
-            chargeRecord.setOrderType(Constants.USER_RECHARGE_TYPE_IN);
-            chargeRecord.setCreateTime(new Date());
-            chargeRecord.setUpdateTime(new Date());
-            chargeRecord.setIdDelete(Constants.OBJECT_NOT_DELETE);
-            Long chargeRecordId = chargeRecordMapper.insertIdBack(chargeRecord);
+        //创建流水
+        ChargeRecord chargeRecord = new ChargeRecord();
+        chargeRecord.setOrderName(Constants.USER_RECHARGE_PREFIX + user.getId() + new Date().getTime());//前缀+ 用户ID +时间戳
+        chargeRecord.setUserId(userId);
+        chargeRecord.setPlatformId(platform.getId());
+        chargeRecord.setCoin(decimalPrice);
+        chargeRecord.setOrderType(Constants.USER_RECHARGE_TYPE_IN);
+        chargeRecord.setCreateTime(new Date());
+        chargeRecord.setUpdateTime(new Date());
+        chargeRecord.setIdDelete(Constants.OBJECT_NOT_DELETE);
+        chargeRecordMapper.insertIdBack(chargeRecord);
 
-            //创建微信支付流水
-            wxChargeRecord.setChargeId(chargeRecordId);
-            wxChargeRecordMapper.insert(wxChargeRecord);
-        } catch (Exception e) {
-            e.printStackTrace();
-            return new Response(Code.OBJECT_UPDATE_STATUS_ERROR);
-        }
+        //创建微信支付流水
+        wxChargeRecord.setChargeId(chargeRecord.getId());
+        wxChargeRecordMapper.insert(wxChargeRecord);
         return new Response(Code.SUCCESS);
     }
 
@@ -357,16 +347,16 @@ public class WxPayServiceImpl implements WxPayService {
             paramMap.put("refund_fee", refund_fee);
             paramMap.put("op_user_id", op_user_id);
 
-            String sign = getSign(paramMap,key);
+            String sign = getSign(paramMap, key);
             paramMap.put("sign", sign);
             String requestXML = XMLUtil.getRequestXml(paramMap);
             String resXml = CertHttpUtil.postData(Constant.REFUND_API, requestXML);
             //解析xml为集合，请打断点查看resXml详细信息
             Map<String, String> refundMap = XMLUtil.getMapFromXML(resXml);
             //查看申请退款状态
-            String resultCode = (String)refundMap.get("result_code");
+            String resultCode = (String) refundMap.get("result_code");
             System.out.print(resultCode);
-            if("SUCCESS".equals(resultCode)){
+            if ("SUCCESS".equals(resultCode)) {
                 WxChargeRecord refundWxChargeRecord = new WxChargeRecord();
                 refundWxChargeRecord.setOrderId(wxChargeRecord.getOrderId());
                 refundWxChargeRecord.setChargeType(Constants.CHARGE_TYPE_OUTCOME);
@@ -377,7 +367,7 @@ public class WxPayServiceImpl implements WxPayService {
                 refundWxChargeRecord.setIsDelete(Constants.OBJECT_NOT_DELETE);
                 wxChargeRecordMapper.insert(refundWxChargeRecord);
             }
-            map.put("refundMap",refundMap);
+            map.put("refundMap", refundMap);
         }
         map.put("code", code);
         map.put("message", message);

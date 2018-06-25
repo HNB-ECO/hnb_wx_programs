@@ -78,6 +78,22 @@
   </style>
 </head>
 <body class="gray-bg">
+*
+<div class="form-group" style="margin-top: 20px;height: 50px">
+  <label class="col-sm-1 control-label">平台ID：</label>
+  <div class="col-sm-2">
+    <select id="selectID" name="goodTypeId" class="form-control">
+    </select>
+  </div>
+  <label class="col-sm-1 control-label">用户：</label>
+  <div class="col-sm-2">
+    <input type="text" class="form-control" id="nickName" name="workNo" value="" placeholder="请输入用户姓名查询"/>
+  </div>
+  <div class="col-sm-3">
+    <button type="button" style="float: right" id="btnSearch"  class="btn btn-primary">查询</button>
+  </div>
+</div>
+
 <div class="wrapper wrapper-content animated fadeInRight">
   <div class="row">
     <div class="col-sm-12">

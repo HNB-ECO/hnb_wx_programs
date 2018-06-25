@@ -14,6 +14,7 @@ var goodTypeId = "";
 //是否可以编辑添加
 var canSave = false;
 var param = new Object();
+var platFormId = ""
 
 //时间戳转时间
 function timestampToTime(timestamp) {
@@ -34,26 +35,109 @@ function showimage(source) {
     $("#ShowImage_Form").modal();
 }
 
-////下拉取值
-//$.ajax({
-//// get请求地址
-//    url: "/admin/goodsType/getGoodsTypeSelect",
-//    data:{ platformId: "1"}, //要发送的数据（参数）格式为{'val1':"1","val2":"2"},
-//    dataType: "json",
-//    success: function (data) {
-//        console.log(data)
-//        var optArr = [];
-//        for (var i = 0; i < data.data.length; i++) {
-//            $('#choose').append("<option value=" + data.data[i].id + ">" + data.data[i].goodTypeName + "</option>");
-//        }
-//        // 缺一不可
-//        $('#choose').selectpicker('refresh');
-//        $('#choose').selectpicker('render');
-//    }
-//});
 
+$.ajax({
+// get请求地址
+    url: "/admin/platform/getPlatformList",
+    dataType: "json",
+    success: function (data) {
+        console.log(data)
+        var optArr = [];
+        for (var i = 0; i < data.data.length; i++) {
+            $('#selectID').append("<option value=" + data.data[i].id + ">" + data.data[i].platformName + "</option>");
+        }
+        // 缺一不可
+        $('#selectID').selectpicker('refresh');
+        $('#selectID').selectpicker('render');
+        fgetGoodType()
+    }
+});
+
+
+////选择平台
+function getPlatForm(){
+$.ajax({
+// get请求地址
+    url: "/admin/platform/getPlatformList",
+    dataType: "json",
+    success: function (data) {
+        console.log(data)
+        var optArr = [];
+        for (var i = 0; i < data.data.length; i++) {
+            $('#platformId').append("<option value=" + data.data[i].id + ">" + data.data[i].platformName + "</option>");
+            $('#selectID').append("<option value=" + data.data[i].id + ">" + data.data[i].platformName + "</option>");
+        }
+        // 缺一不可
+        $('#platformId').selectpicker('refresh');
+        $('#platformId').selectpicker('render');
+        $('#selectID').selectpicker('refresh');
+        $('#selectID').selectpicker('render');
+        getGoodType()
+        fgetGoodType()
+    }
+});
+}
+
+
+////选择商品类型
+function getGoodType(){
+$.ajax({
+// get请求地址
+    url: "/admin/goodsType/getGoodsTypeSelect",
+    data:{
+        platformId: $("#platformId").val()
+    },
+    dataType: "json",
+    success: function (data) {
+        console.log(data)
+        var optArr = [];
+        for (var i = 0; i < data.data.length; i++) {
+            $('#goodTypeId').append("<option value=" + data.data[i].id + ">" + data.data[i].goodTypeName + "</option>");
+        }
+        // 缺一不可
+        $('#goodTypeId').selectpicker('refresh');
+        $('#goodTypeId').selectpicker('render');
+    }
+});
+}
+
+function fgetGoodType(){
+    $.ajax({
+// get请求地址
+        url: "/admin/goodsType/getGoodsTypeSelect",
+        data:{
+            platformId: $("#selectID").val()
+        },
+        dataType: "json",
+        success: function (data) {
+            console.log(data)
+            var optArr = [];
+            for (var i = 0; i < data.data.length; i++) {
+                $('#selectGoodType').append("<option value=" + data.data[i].id + ">" + data.data[i].goodTypeName + "</option>");
+            }
+            // 缺一不可
+            $('#selectGoodType').selectpicker('refresh');
+            $('#selectGoodType').selectpicker('render');
+        }
+    });
+}
+
+$("#btnSearch").on('click',function(){
+    $table.bootstrapTable('refresh', {pageNumber: 1});
+})
 
 $().ready(function(){
+
+    window.operateEvents = {
+        'click .RoleOfedit': function (e, value, row, index) {
+            console.log("send")
+            window.location.href="/admin/goodsDetail/intoGoodsDetailManage?id=" + value;
+
+        }
+    };
+
+
+
     $table = $('#table');
     console.log("ready")
     $table.bootstrapTable({
@@ -69,9 +153,9 @@ $().ready(function(){
             //////排序方式
             //param["orderBy"] = params.sortOrder;
             //额外的参数
-            param["goodTypeId"] = "1"
+            param["goodTypeId"] = $("#selectID").val()
             //param["goodName"] = "刘翔T恤";
-            param["platformId"]="1"
+            param["platformId"]= $("#selectGoodType").val()
             return param;
         },
         //onLoadSuccess: function(data){  //加载成功时执行
@@ -86,69 +170,73 @@ $().ready(function(){
                 checkbox : true
             },
             {
-                field : "id",
-                title : "id",
+                field : "platformId",
+                title : "platformId",
                 visible : false,
-                switchable : false,
-                columnType : "Long"
+                formatter: function(value,row,index){
+                    platFormId = value
+                }
             },
             {
                 field : "name",
                 title : "商品名称",
-                filterControl : "input",
-                columnType : "String"
             },
             {
                 field : "shortName",
                 title : "商品类别",
-                filterControl : "input",
-                columnType : "String",
+
+            },{
+
+                field:"isDelete",
+                title:"状态",
+                formatter: function(value,row,index){
+                    var str = ""
+                    if(value == 1){
+                        str = "下架"
+                    }else{
+                        str = "在售"
+                    }
+                    return  str;
+                }
+            },
+            {
+                field : "imageUrl",
+                title : "商品图片",
+                formatter: function(value,row,index){
+                    var url = value
+                    return '<img  src="'+url+'" class="img-rounded" style="height: 300px" >';
+                }
             },
             {
                 field : "infoUrl",
-                title : "商品图片",
-                filterControl : "input",
-                columnType : "String",
+                title : "商品详情",
                 formatter: function(value,row,index){
                     var url = value
-                    return '<img  src="'+url+'" class="img-rounded" style="height: 500px" >';
+                    return '<img  src="'+url+'" class="img-rounded" style="height: 300px" >';
                 }
             },
-
             {
                 field : "price",
                 title : "商品价格",
-                sortable: true,
-                filterControl : "input",
-                columnType : "String"
             },
             {
                 field : "coinPrice",
                 title : "商品积分价",
-                sortable: true,
-                filterControl : "input",
-                columnType : "String"
+
             },
             {
                 field : "unit",
                 title : "商品单位",
-                sortable: true,
-                filterControl : "input",
-                columnType : "String"
+
             },
             {
                 field : " sales	",
                 title : "已售",
-                sortable: true,
-                filterControl : "input",
-                columnType : "String"
+
             },
             {
                 field : "createTime",
                 title : "创建时间",
-                sortable: true,
-                filterControl : "input",
-                columnType : "String",
                 //formatter : function (value, row, index) {
                 //    var str = timestampToTime(value);
                 //    return str;
@@ -157,14 +245,23 @@ $().ready(function(){
             {
                 field : "updateTime",
                 title : "更新状态时间",
-                sortable: true,
-                filterControl : "input",
-                columnType : "String",
                 //formatter : function (value, row, index) {
                 //    var str = timestampToTime(value);
                 //    return str;
                 //},
             },
+            {
+                field: 'id',
+                title: '操作',
+                width: '100px',
+                align:'center',
+                events: operateEvents,
+                formatter:  function operateFormatter(value, row, index) {
+                    return [
+                        '<input type="submit" value="查看详情" class="RoleOfedit btn btn-primary  btn-sm"   data-toggle="modal"  style="display:inline-block" >',
+                    ].join('');
+                }
+            }
         ],
         responseHandler: function(res) {
             console.log(res)
@@ -197,6 +294,7 @@ $().ready(function(){
 
     //添加
     $("#addBtn").on("click", function() {
+        getPlatForm()
         if (canSave) {
             alertWarning("请先选择商品类别！");
             return;
@@ -219,7 +317,7 @@ $().ready(function(){
 
     //编辑
     $("#updateBtn").on("click", function () {
-        //获取表格已选择项数组
+        getPlatForm()
         var checkArr = $table.bootstrapTable('getSelections');
         if (checkArr.length != 1) {
             alertUpdateNone();
@@ -227,7 +325,7 @@ $().ready(function(){
         }
         //选中row
         row = checkArr[0];
-        openEdit(row.goodNameId);
+        openEdit(row.id);
     });
 
     //删除
@@ -238,14 +336,14 @@ $().ready(function(){
             alertDeleteNone();
             return;
         }
-        var ids = getIds(checkArr, "goodNameId");
+        var ids = getIds(checkArr, "id");
         //确认或取消选择框
         alertConfirm(function(){
             $.ajax({
-                url: "../manage/good!goodsNameDelete.html",
+                url: "/admin/goods/deleteGoods",
                 type: "post",
                 data: {
-                    id: ids
+                    goodsId: ids
                 },
                 cache: false,
                 dataType: "json",
@@ -256,10 +354,6 @@ $().ready(function(){
                     removeLoading();
                 },
                 success: function(data) {
-                    if (data.errcode != 0) {
-                        alertWarning();
-                        return;
-                    }
                     $table.bootstrapTable('refresh', {pageNumber: 1});
                     alertSuccess("删除成功");
                 },
@@ -342,10 +436,10 @@ var getGoodExportParams = function(prefix) {
 
 var openEdit = function(id){
     $.ajax({
-        type: "post",
-        url: "../manage/good!detail.html",
+        type: "GET",
+        url: "/admin/goods/getGoodsInfo",
         data: {
-            id: id
+            goodsId: id
         },
         cache: false,
         dataType: "json",
@@ -356,51 +450,18 @@ var openEdit = function(id){
             removeLoading();
         },
         success: function(data) {
-            if (data.errcode != 0) {
-                alertWarning(data.errmsg);
-                return;
-            }
             var $modal = $("#saveModal");
             $modal.find(".modal-title").text("编辑");
-            $modal.find("#khmc").selectpicker('val', data.data.userIdList);
-            $modal.find("#cpbm").val(data.data.goodShortName);
-            $modal.find("#cpmc").val(data.data.goodName);
-            if (data.data.goodMergeContainerType == 1) {
-                $modal.find("#yes").iCheck('check');
-            } else {
-                $modal.find("#no").iCheck('check');
-            }
-            if (data.data.transiType == 2) {
-                $modal.find("#tran-yes").iCheck('check');
-            } else {
-                $modal.find("#tran-no").iCheck('check');
-            }
-
-            if (data.data.thawType == 1) {
-                $modal.find("#thaw-type-yes").iCheck('check');
-            } else {
-                $modal.find("#thaw-type-no").iCheck('check');
-            }
-
-            if (data.data.transiTypeStatus == 1) {
-                $modal.find("#transiTypeStatus-yes").iCheck('check');
-            } else {
-                $modal.find("#transiTypeStatus-no").iCheck('check');
-            }
-            $modal.find("#wc").selectpicker('val', data.data.warehouseType);
-            $modal.find("#ptdh").val(data.data.goodMergeContainerCode);
-            $modal.find("#gg").val(data.data.goodSpecification);
-            $modal.find("#dz").val(data.data.goodWeight);
-            $modal.find("#dw").val(data.data.goodUnit);
-            $modal.find("#tpzdsl").val(data.data.containerInfoNum);
-            $modal.find("#bh").val(data.data.goodNameId);
-            $modal.find("#lx").val(data.data.goodTypeId);
-            $modal.find("#bzxs").val(data.data.packageStyle);
-            $modal.find("#bzsl").val(data.data.packageNum);
-            $modal.find("#aqkc").val(data.data.safeStock);
-            $modal.find("#wxkc").val(data.data.dangerStock);
-
-            saveFormValidate();
+            $modal.find("#goodTypeId").selectpicker('val', data.data.goodTypeId);
+            $modal.find("#accPay").selectpicker('val', data.data.accPay);
+            $modal.find("#platformId").selectpicker('val', data.data.platformId);
+            $modal.find("#name").val(data.data.name);
+            $modal.find("#shortName").val(data.data.shortName);
+            $modal.find("#picUrl").val(data.data.infoUrl);
+            $modal.find("#bannerUrl").val(data.data.imageUrl);
+            $modal.find("#goodImg").attr("src",data.data.imageUrl);
+            $modal.find("#infoImg").attr("src",data.data.infoUrl);
+            UpdateFormValidate();
             //显示模态框
             showModal($modal);
         },
@@ -432,10 +493,11 @@ var initICheck = function() {
 }
 
 var saveFormValidate = function() {
+
     $("#saveModal form").validate({
         submitHandler: function(form) {   //表单提交句柄,为一回调函数，带一个参数：form
             $.ajax({
-                url: "/admin/goodsType/createGoodsType",
+                url: "/admin/goods/createGoods",
                 type: "post",
                 cache: false,
                 data: $(form).serialize(),
@@ -448,10 +510,38 @@ var saveFormValidate = function() {
                 },
                 success: function(data) {
                     console.log(data)
-                    if (data.errcode != 0) {
-                        alertWarning(data.errmsg);
-                        return;
-                    }
+                    $("#saveModal").modal("hide");
+                    //刷新表格
+                    $table.bootstrapTable('refresh', {pageNumber: 1});
+                    alertSuccess("保存成功");
+                },
+                error: function() {
+                    alertWarning();
+                }
+            });
+        },
+    });
+}
+
+
+
+function UpdateFormValidate(){
+    $("#saveModal form").validate({
+        submitHandler: function(form) {   //表单提交句柄,为一回调函数，带一个参数：form
+            $.ajax({
+                url: "/admin/goods/updateGoods",
+                type: "post",
+                cache: false,
+                data: $(form).serialize(),
+                dataType: "json",
+                beforeSend: function() {
+                    showLoading();
+                },
+                complete: function() {
+                    removeLoading();
+                },
+                success: function(data) {
+                    console.log(data)
                     $("#saveModal").modal("hide");
                     //刷新表格
                     $table.bootstrapTable('refresh', {pageNumber: 1});
@@ -463,60 +553,29 @@ var saveFormValidate = function() {
             });
         },
         rules: {
-            "goodsName.goodShortName": {
+            "name": {
                 required: true,
-                maxlength: 20,
-                remote: {
-                    url: "../manage/good!checkShortName.html",
-                    data: {
-                        "goodsName.goodShortName": function() {
-                            return $("#cpbm").val();
-                        },
-                        "goodsName.goodNameId": $("#bh").val(),
-                        "customer.userId": $("#khmc").val()
-                    }
-                }
+                maxlength: 60,
             },
-            "goodsName.goodName": {
+            "shortName": {
                 required: true,
                 maxlength: 60
             },
-            "goodsName.goodMergeContainerCode": {
+            "platformId": {
                 required: true,
-                maxlength: 200
             },
-            "goodsName.goodSpecification": {
+            "goodTypeId": {
                 required: true,
-                maxlength: 20
             },
-            "goodsName.goodWeight": {
+            "accPay": {
                 required: true,
-                number: true
             },
-            "goodsName.goodUnit": {
+            " imageUrl": {
                 required: true,
-                maxlength: 20
             },
-            "goodsName.packageStyle": {
+            " infoUrl": {
                 required: true,
-                maxlength: 50
             },
-            "goodsName.packageNum": {
-                required: true,
-                digits: true
-            },
-            "goodsName.containerInfoNum": {
-                required: true,
-                digits: true
-            },
-            "goodsName.safeStock": {
-                required: true,
-                digits: true
-            },
-            "goodsName.dangerStock": {
-                required: true,
-                digits: true
-            }
         }
     });
 }
@@ -561,85 +620,7 @@ var importFormValidate = function() {
 }
 
 
-var uploader = Qiniu.uploader({
-    runtimes: 'html5,flash,html4',      // 上传模式，依次退化
-    browse_button: 'selectImg',         // 上传选择的点选按钮ID，必需
-    // 在初始化时，uptoken，uptoken_url，uptoken_func三个参数中必须有一个被设置
-    // 且如果提供了多个，其优先级为uptoken > uptoken_url > uptoken_func
-    // 其中uptoken是直接提供上传凭证，uptoken_url是提供了获取上传凭证的地址，如果需要定制获取uptoken的过程则可以设置uptoken_func
-    uptoken : 'vWxd-w1ipbuT3vMkHA8mRblGnFpJ9AlWYmCyTPRx:9wIXxxWHVWq2PZ_U0Tm2qm4TV0E=:eyJzY29wZSI6ImhuYmJsb2NrIiwiZGVhZGxpbmUiOjMzNTQ1MTQ0MjZ9', // uptoken是上传凭证，由其他程序生成
-    // uptoken_url: '/uptoken',         // Ajax请求uptoken的Url，强烈建议设置（服务端提供）
-    // uptoken_func: function(file){    // 在需要获取uptoken时，该方法会被调用
-    //    // do something
-    //    return uptoken;
-    // },
-    get_new_uptoken: false,             // 设置上传文件的时候是否每次都重新获取新的uptoken
-    // downtoken_url: '/downtoken',
-    // Ajax请求downToken的Url，私有空间时使用，JS-SDK将向该地址POST文件的key和domain，服务端返回的JSON必须包含url字段，url值为该文件的下载地址
-    // unique_names: true,              // 默认false，key为文件名。若开启该选项，JS-SDK会为每个文件自动生成key（文件名）
-    // save_key: true,                  // 默认false。若在服务端生成uptoken的上传策略中指定了sava_key，则开启，SDK在前端将不对key进行任何处理
-    domain: 'http://p97k4szaj.bkt.clouddn.com',     // bucket域名，下载资源时用到，必需
-    container: 'container',             // 上传区域DOM ID，默认是browser_button的父元素
-    max_file_size: '100mb',             // 最大文件体积限制
-    flash_swf_url: 'path/of/plupload/Moxie.swf',  //引入flash，相对路径
-    max_retries: 5,                     // 上传失败最大重试次数
-    dragdrop: true,                     // 开启可拖曳上传
-    drop_element: 'container',          // 拖曳上传区域元素的ID，拖曳文件或文件夹后可触发上传
-    chunk_size: '4mb',                  // 分块上传时，每块的体积
-    auto_start: true,                   // 选择文件后自动上传，若关闭需要自己绑定事件触发上传
-    //x_vars : {
-    //    查看自定义变量
-    //    'time' : function(up,file) {
-    //        var time = (new Date()).getTime();
-    // do something with 'time'
-    //        return time;
-    //    },
-    //    'size' : function(up,file) {
-    //        var size = file.size;
-    // do something with 'size'
-    //        return size;
-    //    }
-    //},
-    init: {
-        'FilesAdded': function(up, files) {
-            plupload.each(files, function(file) {
-                // 文件添加进队列后，处理相关的事情
-            });
-        },
-        'BeforeUpload': function(up, file) {
-            // 每个文件上传前，处理相关的事情
-        },
-        'UploadProgress': function(up, file) {
-            // 每个文件上传时，处理相关的事情
-        },
-        'FileUploaded': function(up, file, info) {
-            // 每个文件上传成功后，处理相关的事情
-            // 其中info是文件上传成功后，服务端返回的json，形式如：
-            // {
-            //    "hash": "Fh8xVqod2MQ1mocfI4S4KpRL6D98",
-            //    "key": "gogopher.jpg"
-            //  }
-            // 查看简单反馈
-            // var domain = up.getOption('domain');
-            // var res = parseJSON(info);
-            // var sourceLink = domain +"/"+ res.key; 获取上传成功后的文件的Url
-        },
-        'Error': function(up, err, errTip) {
-            //上传出错时，处理相关的事情
-        },
-        'UploadComplete': function() {
-            //队列文件处理完毕后，处理相关的事情
-        },
-        'Key': function(up, file) {
-            // 若想在前端对每个文件的key进行个性化处理，可以配置该函数
-            // 该配置必须要在unique_names: false，save_key: false时才生效
 
-            var key = "";
-            // do something with key here
-            return key
-        }
-    }
-});
 
 
 

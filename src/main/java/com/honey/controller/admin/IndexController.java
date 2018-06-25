@@ -145,7 +145,17 @@ public class IndexController {
     }
 
     @RequestMapping(value = "/mainLoad",method = RequestMethod.GET)
-    public String mainLoad(){
+    public String mainLoad(HttpServletRequest request,ModelMap map){
+        Integer type = (Integer) request.getSession().getAttribute("type");
+        List<Platform> platforms = new ArrayList<Platform>();
+
+        if(2==type){//获取platformId
+            Platform platform = (Platform) request.getSession().getAttribute(Constants.PLATFORM_LOGIN_INFO);
+            platforms.add(platform);//当前登录用户的ID
+        }else {//管理员登录获取所有未删除平台的ID
+            platforms.addAll(platformService.findUndeletePlatforms());
+        }
+        map.put("platforms",platforms);
         return "/mainLoad";
     }
 
@@ -196,6 +206,19 @@ public class IndexController {
             platforms.addAll(platformService.findUndeletePlatforms());
         }
         return new Response(getCharData(platforms));
+    }
+
+    /**
+     * 通过ID查询商品统计信息
+     * @param request
+     * @return
+     */
+    @RequestMapping("/getGoodPieChart")
+    @ResponseBody
+    public Response getGoodPieChart(HttpServletRequest request){
+        String platformId = request.getParameter("platformId");
+        Platform platform = platformService.getPlatformById(Long.valueOf(platformId));
+        return new Response(createGoodChart(platform));
     }
 
 

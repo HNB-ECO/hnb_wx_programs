@@ -104,8 +104,22 @@ public class OrderServiceImpl implements OrderService {
         /**
          * 添加订单信息
          */
+        Long userId = createOrderRequest.getUserId();
+        User user = userMapper.selectByPrimaryKey(userId);
+        if (DataUtils.isNullOrEmpty(user) || user.getIsDelete() == Constants.OBJECT_IS_DELETE)
+            return new Response(Code.OBJECT_NOT_EXIST_OR_IS_DELETE);
         Order order = new Order();
         if (!DataUtils.isNullOrEmpty(createOrderRequest.getTotalCoin())) {
+            BigDecimal userCoin = user.getCoinBalance();
+            //获得冻结的画呗数量
+            List<WithdrawChargeRecord> withdrawList = withdrawService.getUnCompleteWithdrawListByUserId(userId);
+            BigDecimal blockCoin = new BigDecimal(0);
+            for (WithdrawChargeRecord w : withdrawList) {
+                blockCoin = blockCoin.add(w.getWithdrawAmount());
+            }
+            if (userCoin.subtract(blockCoin).compareTo(createOrderRequest.getTotalCoin()) == -1) {
+                return new Response(Code.USER_NOT_ENOUGH_ERROR);
+            }
             order.setTotalCoin(createOrderRequest.getTotalCoin());
         }
         if (!DataUtils.isNullOrEmpty(createOrderRequest.getTotalPrice())) {
@@ -158,7 +172,10 @@ public class OrderServiceImpl implements OrderService {
         GoodDetail goodDetail = goodDetailMapper.selectByPrimaryKey(goodDetailId);
         if (DataUtils.isNullOrEmpty(goodDetail))
             return new Response(Code.OBJECT_NOT_EXIST);
-        goodDetail.setInventory(goodDetail.getInventory()-createOrderRequest.getAmount());
+        Long nowInventory = goodDetail.getInventory() - createOrderRequest.getAmount();
+        if (nowInventory < 0L)
+            return new Response(2L, "库存不足！请重新选择数量！", null);
+        goodDetail.setInventory(nowInventory);
         goodDetail.setUpdateTime(new Date());
         goodDetailMapper.updateByPrimaryKeySelective(goodDetail);
         return new Response(Code.SUCCESS, orderId);
@@ -191,10 +208,10 @@ public class OrderServiceImpl implements OrderService {
             //获得冻结的画呗数量
             List<WithdrawChargeRecord> withdrawList = withdrawService.getUnCompleteWithdrawListByUserId(userId);
             BigDecimal blockCoin = new BigDecimal(0);
-            for(WithdrawChargeRecord w:withdrawList){
+            for (WithdrawChargeRecord w : withdrawList) {
                 blockCoin = blockCoin.add(w.getWithdrawAmount());
             }
-            if(userCoin.subtract(blockCoin).compareTo(order.getTotalCoin())==-1){
+            if (userCoin.subtract(blockCoin).compareTo(order.getTotalCoin()) == -1) {
                 return new Response(Code.USER_NOT_ENOUGH_ERROR);
             }
             userCoin = userCoin.subtract(order.getTotalCoin());
@@ -235,7 +252,7 @@ public class OrderServiceImpl implements OrderService {
             //更新商品销量
             Goods goods = workOrder.getGoods();
             Integer amount = workOrder.getAmount();
-            goods.setSales(goods.getSales()+amount.longValue());
+            goods.setSales(goods.getSales() + amount.longValue());
             goodsMapper.updateByPrimaryKeySelective(goods);
         }
 
@@ -268,6 +285,7 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 查看物流
+     *
      * @param workOrderId
      * @return
      */
@@ -283,25 +301,26 @@ public class OrderServiceImpl implements OrderService {
         ExpressInfoExample expressInfoExample = new ExpressInfoExample();
         ExpressInfoExample.Criteria expressInfoCriteria = expressInfoExample.createCriteria();
         expressInfoCriteria.andExpNoEqualTo(expressNo);
-        List<ExpressInfo> expressInfoList= expressInfoMapper.selectByExample(expressInfoExample);
+        List<ExpressInfo> expressInfoList = expressInfoMapper.selectByExample(expressInfoExample);
         //已有物流信息
-        if(expressInfoList!=null && expressInfoList.size() >0){
+        if (expressInfoList != null && expressInfoList.size() > 0) {
             ExpressInfo expressInfo = expressInfoList.get(0);
             Date updateTime = expressInfo.getUpdateTime();
             Date now = new Date();
-            Long timeSpan = (now.getTime()-updateTime.getTime())/(1000*60);//时间相差分钟
-            if(timeSpan>60L){
-                return expressInfoService.updateExpressInfo(expressInfo, expressNo,expressCode);
-            }else
-                return new Response(Code.SUCCESS,expressInfo);
-        }else{
+            Long timeSpan = (now.getTime() - updateTime.getTime()) / (1000 * 60);//时间相差分钟
+            if (timeSpan > 60L) {
+                return expressInfoService.updateExpressInfo(expressInfo, expressNo, expressCode);
+            } else
+                return new Response(Code.SUCCESS, expressInfo);
+        } else {
             //还未查询过物流信息
-            return expressInfoService.createExpressInfo(workOrderId,expressNo,expressCode);
+            return expressInfoService.createExpressInfo(workOrderId, expressNo, expressCode);
         }
     }
 
     /**
      * 确认收货
+     *
      * @param workOrderId
      * @return
      */
@@ -311,7 +330,7 @@ public class OrderServiceImpl implements OrderService {
             return new Response(Code.OBJECT_NOT_EXIST_OR_IS_DELETE);
         Integer workOrderStatus = workOrder.getStatus();
         if (!Constants.WORKORDER_STATUS_RECEIPT.equals(workOrderStatus))
-            return new Response(2l,"该订单未处于发货状态，不能确认收货！",null);
+            return new Response(2l, "该订单未处于发货状态，不能确认收货！", null);
         workOrder.setStatus(Constants.ORDER_STATUS_COMMENT);
         workOrder.setReceiptTime(new Date());
         workOrder.setUpdateTime(new Date());
@@ -321,7 +340,7 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderMapper.selectByPrimaryKey(orderId);
         Integer orderStatus = order.getOrderStatus();
         if (!Constants.WORKORDER_STATUS_RECEIPT.equals(orderStatus))
-            return new Response(2l,"该订单未处于发货状态，不能确认收货！",null);
+            return new Response(2l, "该订单未处于发货状态，不能确认收货！", null);
         order.setOrderStatus(Constants.ORDER_STATUS_COMMENT);
         order.setUpdateTime(new Date());
         orderMapper.updateByPrimaryKeySelective(order);
@@ -347,9 +366,9 @@ public class OrderServiceImpl implements OrderService {
             //归还商品库存
             Long goodsDetailId = workOrder.getGoodDetailId();
             GoodDetail goodDetail = goodDetailMapper.selectByPrimaryKey(goodsDetailId);
-            if(goodDetail==null)
+            if (goodDetail == null)
                 return new Response(Code.OBJECT_NOT_EXIST);
-            goodDetail.setInventory(goodDetail.getInventory()+workOrder.getAmount());
+            goodDetail.setInventory(goodDetail.getInventory() + workOrder.getAmount());
             goodDetail.setUpdateTime(new Date());
             goodDetailMapper.updateByPrimaryKeySelective(goodDetail);
         }
@@ -398,7 +417,7 @@ public class OrderServiceImpl implements OrderService {
 
         } else if (Constants.PAY_TYPE_WX.equals(paymentType)) {//微信支付
             //微信退款
-            Map<String,Object> resultMap = wxPayService.executeWxRefund(order);
+            Map<String, Object> resultMap = wxPayService.executeWxRefund(order);
             response = new Response((Long) resultMap.get("code"), (String) resultMap.get("message"), resultMap);
         }
         /**
@@ -409,21 +428,21 @@ public class OrderServiceImpl implements OrderService {
             workOrder.setStatus(Constants.WORKORDER_STATUS_CANCEL);
             workOrder.setUpdateTime(new Date());
             workOrder.setEndTime(new Date());
-            workOrderMapper.updateByPrimaryKey(workOrder);
+            workOrderMapper.updateByPrimaryKeySelective(workOrder);
             //归还商品库存
             Long goodsDetailId = workOrder.getGoodDetailId();
             GoodDetail goodDetail = goodDetailMapper.selectByPrimaryKey(goodsDetailId);
-            if(goodDetail==null)
+            if (goodDetail == null)
                 return new Response(Code.OBJECT_NOT_EXIST);
-            goodDetail.setInventory(goodDetail.getInventory()+workOrder.getAmount());
+            goodDetail.setInventory(goodDetail.getInventory() + workOrder.getAmount());
             goodDetail.setUpdateTime(new Date());
             goodDetailMapper.updateByPrimaryKeySelective(goodDetail);
         }
 
         order.setUpdateTime(new Date());
         order.setOrderStatus(Constants.ORDER_STATUS_CANCEL);
-        orderMapper.updateByPrimaryKey(order);
-        if(response==null)
+        orderMapper.updateByPrimaryKeySelective(order);
+        if (response == null)
             return new Response(Code.SUCCESS);
         else
             return response;
@@ -431,17 +450,18 @@ public class OrderServiceImpl implements OrderService {
 
     /**
      * 通过平台ID和创建日期查询当日订单量
+     *
      * @param platformId
      * @param startDate
      * @param endDate
      * @return
      */
-    public int countByDate(String platformId, Date startDate,Date endDate) {
+    public int countByDate(String platformId, Date startDate, Date endDate) {
         OrderExample example = new OrderExample();
         OrderExample.Criteria criteria = example.createCriteria();
         criteria.andIsDeleteEqualTo(Constants.OBJECT_NOT_DELETE);
         criteria.andPlatformIdEqualTo(platformId);
-        criteria.andCreateTimeBetween(startDate,endDate);
+        criteria.andCreateTimeBetween(startDate, endDate);
         return orderMapper.countByExample(example);
     }
 }

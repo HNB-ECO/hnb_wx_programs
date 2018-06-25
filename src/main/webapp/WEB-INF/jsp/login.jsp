@@ -25,8 +25,11 @@
 
         function login() {
             $.post("${pageContext.request.contextPath}/admin/index/login", $("#loginform").serialize(),function(data){
+
                 if(data.code == 200){
-                    window.location.href = '/admin/index/getMain';
+                    console.log(data)
+                 window.location.href = '/admin/index/getMain';
+
                 }else{
                     $("#alert").html(data.message);
                 }

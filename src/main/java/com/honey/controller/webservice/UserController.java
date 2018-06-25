@@ -31,6 +31,21 @@ public class UserController {
     @Autowired
     private ChargeRecordService chargeRecordService;
 
+    /**
+     * 验证用户信息是否存在
+     * @param userId
+     * @return
+     */
+    @RequestMapping(value = "/loginValidate", method = RequestMethod.POST)
+    @ResponseBody
+    public Response loginValidate(@RequestParam(value = "userId") Long userId){
+        try {
+            return userService.loginValidate(userId);
+        }catch (Exception e){
+            e.printStackTrace();
+            return new Response(Code.ADD_OR_UPDATE_OBJECT_FAILED);
+        }
+    }
 
     /**
      * 创建用户信息

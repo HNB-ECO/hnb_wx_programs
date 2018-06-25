@@ -134,9 +134,8 @@ public class UserServiceImpl implements UserService {
         Map<String, Object> map = new HashMap<String, Object>();
         System.out.print("userId:"+userId);
         User user = userMapper.selectByPrimaryKey(userId);
-        //未授权时没有user，直接返回
         if (DataUtils.isNullOrEmpty(user) || user.getIsDelete() == Constants.OBJECT_IS_DELETE)
-            return new Response(Code.SUCCESS);
+            return new Response(Code.OBJECT_NOT_EXIST_OR_IS_DELETE);
         map.put("id", user.getId());
         map.put("nickName", user.getNickName());
         map.put("thirdPartId", user.getThirdPartId());
@@ -253,6 +252,16 @@ public class UserServiceImpl implements UserService {
             user.setUpdateTime(new Date());
             userMapper.updateByPrimaryKeySelective(user);
         }
+        return new Response(Code.SUCCESS);
+    }
+
+    @Override
+    public Response loginValidate(Long userId) {
+        if (DataUtils.isNullOrEmpty(userId))
+            return new Response(Code.SUCCESS);
+        User user = userMapper.selectByPrimaryKey(userId);
+        if (DataUtils.isNullOrEmpty(user) || user.getIsDelete() == Constants.OBJECT_IS_DELETE)
+            return new Response(Code.OBJECT_NOT_EXIST_OR_IS_DELETE);
         return new Response(Code.SUCCESS);
     }
 

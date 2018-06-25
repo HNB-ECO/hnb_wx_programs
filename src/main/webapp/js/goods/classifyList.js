@@ -30,6 +30,26 @@ function timestampToTime(timestamp) {
 }
 
 
+$.ajax({
+// get请求地址
+    url: "/admin/platform/getPlatformList",
+    dataType: "json",
+    success: function (data) {
+        console.log("xiala"+data)
+        var optArr = [];
+        for (var i = 0; i < data.data.length; i++) {
+            $('#selectID').append("<option value=" + data.data[i].id + ">" + data.data[i].platformName + "</option>");
+        }
+        // 缺一不可
+        $('#selectID').selectpicker('refresh');
+        $('#selectID').selectpicker('render');
+    }
+});
+
+$("#btnSearch").on('click',function(){
+    $table.bootstrapTable('refresh', {pageNumber: 1});
+})
+
 $().ready(function(){
 
     $table = $('#table');
@@ -40,13 +60,13 @@ $().ready(function(){
         pageSize: 10,  //每页显示的记录数
         queryParams: function (params) {
             //页号
-            //param["pageNum"] = params.pageNumber;
-            ////////每页条数
+            param["pageNum"] = params.pageNumber;
+            //////每页条数
             param["pageSize"] = params.pageSize;
             //////排序方式
             //param["orderBy"] = params.sortOrder;
             //额外的参数
-            //param["orderStatus"] = orderStatus;
+            param["platformId"] = $("#selectID").val();
             return param;
         },
         //onLoadSuccess: function(data){  //加载成功时执行

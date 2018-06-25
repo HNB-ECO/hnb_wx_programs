@@ -63,6 +63,17 @@
   </script>
 </head>
 <body class="gray-bg">
+*
+<div class="form-group" style="margin-top: 20px;height: 50px">
+  <label class="col-sm-1 control-label">平台ID：</label>
+  <div class="col-sm-2">
+    <select id="selectID" name="selectID" class="form-control">
+    </select>
+  </div>
+  <div class="col-sm-3">
+    <button type="button" style="float: right" id="btnSearch"  class="btn btn-primary">查询</button>
+  </div>
+</div>
 <div class="wrapper wrapper-content animated fadeInRight">
   <div class="row">
     <%--<div class="col-sm-3 white-bg">--%>

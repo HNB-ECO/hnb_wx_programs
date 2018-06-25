@@ -72,6 +72,27 @@
 
 </head>
 <body class="gray-bg">
+*
+
+<div class="form-group" style="margin-top: 20px;height: 50px">
+  <label class="col-sm-1 control-label">平台ID：</label>
+  <div class="col-sm-2">
+    <select id="selectID" name="goodTypeId" class="form-control">
+    </select>
+  </div>
+  <label class="col-sm-1 control-label">商品类型：</label>
+  <div class="col-sm-2">
+    <select id="selectGoodType" name="goodTypeId" class="form-control">
+    </select>
+  </div>
+  <div class="col-sm-3">
+    <button type="button" style="float: right" id="btnSearch"  class="btn btn-primary">查询</button>
+  </div>
+</div>
+
+
+
+
 <div class="wrapper wrapper-content animated fadeInRight">
   <div class="row">
     <div class="col-sm-12">
@@ -115,54 +136,57 @@
               <div class="form-group col-sm-12 " style="padding-bottom: 10px;">
                 <label class="col-sm-3 control-label">商品名称：</label>
                 <div class="col-sm-8">
-                  <input type="text" name="name" class="form-control" placeholder="">
+                  <input type="text" id="name" name="name" class="form-control" placeholder="">
                 </div>
               </div>
               <div class="form-group col-sm-12 " style="padding-bottom: 10px;">
                 <label class="col-sm-3 control-label">商品简称：</label>
                 <div class="col-sm-8">
-                  <input type="text" name="shortName" class="form-control" placeholder="">
+                  <input type="text" id="shortName" name="shortName" class="form-control" placeholder="">
                 </div>
+              </div>
+              <div class="form-group col-sm-12 " style="padding-bottom: 10px;">
+                <label class="col-sm-3 control-label">选择平台：</label>
+                <div class="col-sm-8">
+                <select id="platformId" name="platformId" class="form-control">
+                </select>
+                  </div>
               </div>
               <div class="form-group col-sm-12 " style="padding-bottom: 10px;">
                 <label class="col-sm-3 control-label">商品类型：</label>
                 <div class="col-sm-8">
-                  <select id="wc" name="goodTypeId" class="form-control">
-                    <%-- <c:forEach items="${warehouseTypes}" var="warehouseType">
-                       <option value="${warehouseType.id}">${warehouseType.key}</option>
-                     </c:forEach>--%>
+                  <select id="goodTypeId" name="goodTypeId" class="form-control">
                   </select>
                 </div>
               </div>
               <div class="form-group col-sm-12 " style="padding-bottom: 10px;">
-                <label class="col-sm-3 control-label">商品价格：</label>
+                <label class="col-sm-3 control-label">可支付方式：</label>
                 <div class="col-sm-8">
-                  <input id="goodPrice" type="text" name="goodsName.goodShortName" class="form-control" placeholder="">
-                </div>
-              </div>
-              <div class="form-group col-sm-12 " style="padding-bottom: 10px;">
-                <label class="col-sm-3 control-label">积分价：</label>
-                <div class="col-sm-8">
-                  <input id="iconPrice" type="text" name="goodsName.goodName" class="form-control" placeholder="">
-                </div>
-              </div>
-              <div class="form-group col-sm-12 " style="padding-bottom: 10px;">
-                <label class="col-sm-3 control-label">商品单位：</label>
-                <div class="col-sm-8">
-                  <input id="count" type="text" name="goodsName.goodName" class="form-control" placeholder="">
-                </div>
-              </div>
-              <div class="form-group col-sm-12 " style="padding-bottom: 10px;">
-                <label class="col-sm-3 control-label">商品图片：</label>
-                <div class="col-sm-8" id="btn-uploader">
-                  <img src=""  id="goodImg" style="width: 200px;height: 200px">
-                  <input type="hidden" name="bannerUrl" id="bannerUrl" />
-                  <input type="file" value="选择图片" name="uploadFile" class="fileinput-new select" style="margin-top: 10px" onChange="uploadImage('bannerImageForm','bannerUrl','bannerImg')" />
+                  <select id="accPay" name="accPay" class="form-control">
+                    <option value="1">皆可</option>
+                    <option value="2">HNB</option>
+                    <option value="3">微信</option>
+                  </select>
                 </div>
               </div>
 
-              <input id="bh" type="hidden" name="goodsName.goodNameId" class="form-control" placeholder="">
-              <input id="lx" type="hidden" name="goodsName.goodType.goodTypeId" class="form-control" placeholder="">
+              <div class="form-group col-sm-12 " style="padding-bottom: 10px;">
+                <label class="col-sm-3 control-label">商品图片：</label>
+                <div class="col-sm-8" id="btn-uploader">
+                  <img src="" name="imageUrl"  id="goodImg" style="width: 200px;height: 200px">
+                  <input type="hidden" name="imageUrl" id="bannerUrl" />
+                  <input type="file" value="选择图片" name="uploadFile" class="fileinput-new select" style="margin-top: 10px" onChange="uploadImage('goodImageForm','bannerUrl','goodImg')" />
+                </div>
+              </div>
+
+              <div class="form-group col-sm-12 " style="padding-bottom: 10px;">
+                <label class="col-sm-3 control-label">商品详情：</label>
+                <div class="col-sm-8">
+                  <img src="" name="infoUrl"  id="infoImg" style="width: 200px;height: 400px">
+                  <input type="hidden" name="infoUrl" id="picUrl" />
+                  <input type="file" value="选择图片" name="uploadFile" class="fileinput-new select" style="margin-top: 10px" onChange="uploadImage('goodImageForm','picUrl','infoImg')" />
+                </div>
+              </div>
             </form>
           </div>
         </div>
@@ -188,83 +212,7 @@
   </div>
 </div>
 
-<script src="${ctx}/js/plupload.full.min.js"></script>
-<script src="${ctx}/js/moxie.min.js"></script>
 <script src="${ctx}/js/goods/list.js"></script>
-<script>
-  var  uploader = Qiniu.uploader({
-    runtimes: 'html5,flash,html4',
-    browse_button: 'selectImg',//上传按钮的ID
-    container: 'btn-uploader',//上传按钮的上级元素ID
-    drop_element: 'btn-uploader',
-    max_file_size: '100mb',//最大文件限制
-    flash_swf_url: '/js/Moxie.swf',
-    dragdrop: false,
-    chunk_size: '4mb',//分块大小
-    uptoken : 'vWxd-w1ipbuT3vMkHA8mRblGnFpJ9AlWYmCyTPRx:9wIXxxWHVWq2PZ_U0Tm2qm4TV0E=:eyJzY29wZSI6ImhuYmJsb2NrIiwiZGVhZGxpbmUiOjMzNTQ1MTQ0MjZ9',
-    //若未指定uptoken_url,则必须指定 uptoken ,uptoken由其他程序生成
-    unique_names: true,
-    // 默认 false，key为文件名。若开启该选项，SDK会为每个文件自动生成key（文件名）
-    //save_key: true,
-    //默认 false。若在服务端生成uptoken的上传策略中指定了 `sava_key`，则开启，SDK在前端将不对key进行任何处理
-    domain: 'http://p97k4szaj.bkt.clouddn.com',//自己的七牛云存储空间域名
-    multi_selection: false,//是否允许同时选择多文件
-    //文件类型过滤，这里限制为图片类型
-    filters: {
-      mime_types : [
-        {title : "Image files", extensions: "jpg,jpeg,gif,png"}
-      ]
-    },
-    init: {
-      'FilesAdded': function(up, files) {
-        //do something
-        $("#showImg").attr( "src", files);
-      },
-      'BeforeUpload': function(up, file) {
-        //do something
-      },
-      'UploadProgress': function(up, file) {
-        //可以在这里控制上传进度的显示
-        //可参考七牛的例子
-      },
-      'UploadComplete': function() {
-        //do something
-      },
-      'FileUploaded': function(up, file, info) {
-        //每个文件上传成功后,处理相关的事情
-        //其中 info 是文件上传成功后，服务端返回的json，形式如
-        //
-        //  "hash": "Fh8xVqod2MQ1mocfI4S4KpRL6D98",
-        //  "key": "gogopher.jpg"
-        //}
-        var domain = up.getOption('domain');
-        var res = eval('(' + info + ')');
-        var sourceLink = domain + res.key;//获取上传文件的链接地址
-        $("#showImg").attr( "src",  sourceLink);
-        console.log(sourceLink)
-        //do something
-      },
-      'Error': function(up, err, errTip) {
-        alert(errTip);
-      },
-      'Key': function(up, file) {
-        //当save_key和unique_names设为false时，该方法将被调用
-        var key = "";
-        $.ajax({
-          url: '/qiniu-token/get-key/',
-          type: 'GET',
-          async: false,//这里应设置为同步的方式
-          success: function(data) {
-            var ext = Qiniu.getFileExtension(file.name);
-            key = data + '.' + ext;
-          },
-          cache: false
-        });
-        return key;
-      }
-    }
-  });
-</script>
 
 </body>
 </html>

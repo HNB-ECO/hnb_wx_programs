@@ -21,6 +21,10 @@ var goodTypeId = "";
 var canSave = false;
 var param = new Object();
 
+
+$("#btnSearch").on('click',function(){
+    $table.bootstrapTable('refresh', {pageNumber: 1});
+})
 $().ready(function(){
 
     window.operateEvents = {
@@ -78,13 +82,14 @@ $().ready(function(){
         pageSize: 10,  //每页显示的记录数
         queryParams: function (params) {
             //页号
-            //param["pageNum"] = params.pageNumber;
-            ////////每页条数
+            param["pageNum"] = params.pageNumber;
+            //////每页条数
             param["pageSize"] = params.pageSize;
             //////排序方式
             //param["orderBy"] = params.sortOrder;
             //额外的参数
-            //param["orderStatus"] = orderStatus;
+            param["platformOwner"] = $("#platOwner").val();
+            param["platformName"] = $("#platName").val();
             return param;
         },
         //onLoadSuccess: function(data){  //加载成功时执行

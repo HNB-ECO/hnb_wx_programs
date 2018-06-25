@@ -78,6 +78,11 @@ public interface PlatformService  {
      */
     List<Platform> findUndeletePlatforms();
 
-
+    /**
+     * 通过ID查询信息
+     * @param platformId
+     * @return
+     */
+    Platform getPlatformById(Long platformId);
 
 }

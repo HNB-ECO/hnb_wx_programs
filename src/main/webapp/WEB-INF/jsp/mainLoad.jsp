@@ -43,7 +43,21 @@
 			</div>
 
 			<div class="row">
-				<div class="col-sm-12">
+				<div class="col-sm-2">
+					<div class="form-group" style="color: black">
+						<label class="col-sm-12 control-label">选择要查看的商家</label>
+						<div class="col-sm-12">
+							<div class="col-sm-12 m-l-n">
+								<select class="form-control" multiple="" id ="platformPieSel" onchange="getGoodsDataByPlatform();">
+									<c:forEach items ="${platforms}" var = "platform" >
+										<option value="${platform.id}">${platform.platformName}</option>
+									</c:forEach>
+								</select>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-10">
 					<!-- 商品销量饼状图 -->
 					<div class="ibox float-e-margins">
 						<div class="ibox-title">
@@ -137,7 +151,7 @@
 						var w = 1, h = 1,  color = '', limitItem = dataArray.length;
 						for (var i = 0; i < dataArray.length; ++i) {
 							h = 1 + 1 * Math.random() << 0;
-							w = 1 + 3 * Math.random() << 0;
+							w = 1 + 2 * Math.random() << 0;
 							color = colour[colour.length * Math.random() << 0];
 							html = temp.replace(/\{height\}/g, h*150).replace(/\{width\}/g, w*150).replace("{color}", color).replace("{text}",dataArray[i].name).replace("{index}",dataArray[i].id);
 							$("#freewall").append(html);
@@ -163,12 +177,56 @@
 					}
 				});
 			});
+
+			function getGoodsDataByPlatform(){
+				var platformId = $("#platformPieSel option:selected").val();
+				$.ajax({
+					url : "/admin/index/getGoodPieChart",
+					type : "POST",
+					dataType : "json",
+					data : {"platformId":platformId},
+					success : function(data) {
+						var goodPieData = data.data;
+						//商品销量饼状图
+						var goodPieChart = echarts.init(document.getElementById("goodPieChart"));
+						var goodPieoption = {
+							title : {
+								text: goodPieData.name,
+								subtext: goodPieData.subtext,
+								x:'center'
+							},
+							tooltip : {
+								trigger: 'item',
+								formatter: "{a} <br/>{b} : {c} ({d}%)"
+							},
+							legend: {
+								orient : 'vertical',
+								x : 'left',
+								data: goodPieData.legend
+							},
+							calculable : true,
+							series : goodPieData.data
+						};
+						goodPieChart.setOption(goodPieoption);
+						$(window).resize(goodPieChart.resize);
+					}
+				});
+			}
 		</script>
 
 		<!-- echart-->
 		<script src="${ctx}/js/plugins/echarts/echarts-all.js"></script>
 		<script src="${ctx}/js/content.js?v=1.0.0"></script>
 		<script src="${ctx}/js/cust/main/main.js"></script>
+		<script>
+			var type = '<%=request.getSession().getAttribute("type")%>';
+			console.log("type:::" + type);
+			if(type == "1" ){
+				localStorage.platName="super";
+			}else{
+				localStorage.platName="normal";
+			}
+		</script>
 
 	</body>
 </html>

@@ -87,6 +87,17 @@
   </style>
 </head>
 <body class="gray-bg">
+*
+<div class="form-group" style="margin-top: 20px;height: 50px" id="chooseType">
+    <label class="col-sm-1 control-label">平台ID：</label>
+    <div class="col-sm-2">
+        <select id="selectID" name="selectID" class="form-control">
+        </select>
+    </div>
+    <div class="col-sm-3">
+        <button type="button" style="float: right" id="btnSearch"  class="btn btn-primary">查询</button>
+    </div>
+</div>
 <div class="wrapper wrapper-content animated fadeInRight">
   <div class="row">
     <div class="col-sm-12">
@@ -132,7 +143,7 @@
                                     <input id="bannerName" type="text" name="bannerName" class="form-control" placeholder="">
                                 </div>
                             </div>
-                            <div class="form-group col-sm-12 " style="padding-bottom: 10px;">
+                            <div class="form-group col-sm-12 " style="padding-bottom: 10px;" id="chooseID">
                                 <label class="col-sm-3 control-label">平台号：</label>
                                 <div class="col-sm-8">
                                     <select id="platformId" name="platformId" class="form-control">
@@ -142,7 +153,7 @@
                             <div class="form-group col-sm-12 " style="padding-bottom: 10px;">
                                 <label class="col-sm-3 control-label">活动图片：</label>
                                 <div class="col-sm-8">
-                                    <img src=""  id="bannerImg" style="width: 200px;height: 200px">
+                                    <img src=""  name="bannerUrl"  id="bannerImg" style="width: 200px;height: 200px">
                                     <input type="hidden" name="bannerUrl" id="bannerUrl" />
                                     <input type="file" value="选择图片" name="uploadFile" class="fileinput-new select" style="margin-top: 10px" onChange="uploadImage('bannerImageForm','bannerUrl','bannerImg')" />
                                 </div>
@@ -165,5 +176,7 @@
     </div>
 </div>
 <script src="${ctx}/js/banner/list.js"></script>
+
+
 </body>
 </html>

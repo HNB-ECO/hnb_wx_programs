@@ -90,7 +90,6 @@ $("#btnSearch").on('click',function(){
         $table.bootstrapTable('refresh', {pageNumber: 1});
     }
 
-
 })
 
 //初始表单值
@@ -154,12 +153,30 @@ function Others(){
                 title : "商品名称",
             },
             {
+                field:"goodDetail.sieze",
+                title:"款式",
+            },
+            {
                 field : "order.totalPrice",
                 title : "订单价格",
             },
             {
                 field : "order.totalCoin",
                 title : "订单积分价",
+            },
+            {
+                field : "order.paymentType",
+                title: "付款方式",
+                formatter : function (value, row, index) {
+                    var str = ""
+                    if(value == 1){
+                        str = "HNB"
+                    }else if(value == 2){
+                        str = "WX"
+                    }
+                    return str;
+                },
+
             },
             {
                 field : "endTime",
@@ -249,12 +266,30 @@ function toBeComment(){
                 title : "商品名称",
             },
             {
+                field:"goodDetail.sieze",
+                title:"款式",
+            },
+            {
                 field : "order.totalPrice",
                 title : "订单价格",
             },
             {
                 field : "order.totalCoin",
                 title : "订单积分价",
+            },
+            {
+                field : "order.paymentType",
+                title: "付款方式",
+                formatter : function (value, row, index) {
+                    var str = ""
+                    if(value == 1){
+                        str = "HNB"
+                    }else if(value == 2){
+                        str = "WX"
+                    }
+                    return str;
+                },
+
             },
             {
                 field : "receiptTime",
@@ -346,12 +381,30 @@ function toBegot(){
                 title : "商品名称",
             },
             {
+                field:"goodDetail.sieze",
+                title:"款式",
+            },
+            {
                 field : "order.totalPrice",
                 title : "订单价格",
             },
             {
                 field : "order.totalCoin",
                 title : "订单积分价",
+            },
+            {
+                field : "order.paymentType",
+                title: "付款方式",
+                formatter : function (value, row, index) {
+                    var str = ""
+                    if(value == 1){
+                        str = "HNB"
+                    }else if(value == 2){
+                        str = "WX"
+                    }
+                    return str;
+                },
+
             },
             {
                 field : "shipTime",
@@ -441,12 +494,30 @@ function toBePay(){
                 title : "商品名称",
             },
             {
+                field:"goodDetail.sieze",
+                title:"款式",
+            },
+            {
                 field : "order.totalPrice",
                 title : "订单价格",
             },
             {
                 field : "order.totalCoin",
                 title : "订单积分价",
+            },
+            {
+                field : "order.paymentType",
+                title: "付款方式",
+                formatter : function (value, row, index) {
+                    var str = ""
+                    if(value == 1){
+                        str = "HNB"
+                    }else if(value == 2){
+                        str = "WX"
+                    }
+                    return str;
+                },
+
             },
             {
                 field : "createTime",
@@ -568,12 +639,30 @@ function toBeSend(){
                 title : "商品名称",
             },
             {
+                field:"goodDetail.sieze",
+                title:"款式",
+            },
+            {
                 field : "order.totalPrice",
                 title : "订单价格",
             },
             {
                 field : "order.totalCoin",
                 title : "订单积分价",
+            },
+            {
+                field : "order.paymentType",
+                title: "付款方式",
+                formatter : function (value, row, index) {
+                    var str = ""
+                    if(value == 1){
+                        str = "HNB"
+                    }else if(value == 2){
+                        str = "WX"
+                    }
+                    return str;
+                },
+
             },
             {
                 field : "payTime",

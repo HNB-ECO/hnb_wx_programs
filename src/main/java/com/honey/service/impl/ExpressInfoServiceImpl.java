@@ -50,8 +50,7 @@ public class ExpressInfoServiceImpl implements ExpressInfoService {
         expressInfo.setCreateTime(new Date());
         expressInfo.setUpdateTime(new Date());
         expressInfo.setIsDelete(Constants.OBJECT_NOT_DELETE);
-        Long expressInfoId = expressInfoMapper.insertIdBack(expressInfo);
-        expressInfo = expressInfoMapper.selectByPrimaryKey(expressInfoId);
+        expressInfoMapper.insertIdBack(expressInfo);
         return new Response(Code.SUCCESS,expressInfo);
     }
 

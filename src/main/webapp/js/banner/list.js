@@ -18,23 +18,8 @@ var goodTypeId = "";
 var canSave = false;
 var param = new Object();
 
-//下拉取值
-$.ajax({
-// get请求地址
-    url: "/admin/platform/getPlatformSelect",
-    //data:{ platformId: "1"}, //要发送的数据（参数）格式为{'val1':"1","val2":"2"},
-    dataType: "json",
-    success: function (data) {
-        console.log(data)
-        var optArr = [];
-        for (var i = 0; i < data.data.length; i++) {
-            $('#wc').append("<option value=" + data.data[i].id + ">" + data.data[i].platformName + "</option>");
-        }
-        // 缺一不可
-        $('#choose').selectpicker('refresh');
-        $('#choose').selectpicker('render');
-    }
-});
+
+
 
 //时间戳转时间
 function timestampToTime(timestamp) {
@@ -49,60 +34,37 @@ function timestampToTime(timestamp) {
 }
 
 
+$.ajax({
+// get请求地址
+    url: "/admin/platform/getPlatformList",
+    dataType: "json",
+    success: function (data) {
+
+        var optArr = [];
+        for (var i = 0; i < data.data.length; i++) {
+            $('#selectID').append("<option value=" + data.data[i].id + ">" + data.data[i].platformName + "</option>");
+        }
+        // 缺一不可
+        $('#selectID').selectpicker('refresh');
+        $('#selectID').selectpicker('render');
+    }
+});
+
+$("#btnSearch").on('click',function(){
+    $table.bootstrapTable('refresh', {pageNumber: 1});
+})
+
+
 $().ready(function(){
 
-    //var uploader = Qiniu.uploader({
-    //    runtimes: 'html5,flash,html4',
-    //    browse_button: 'pickfiles',
-    //    container: 'container',
-    //    drop_element: 'container',
-    //    max_file_size: '100mb',
-    //    flash_swf_url: 'js/plupload/Moxie.swf',
-    //    dragdrop: true,
-    //    chunk_size: '4mb',
-    //    uptoken:'vWxd-w1ipbuT3vMkHA8mRblGnFpJ9AlWYmCyTPRx:9wIXxxWHVWq2PZ_U0Tm2qm4TV0E=:eyJzY29wZSI6ImhuYmJsb2NrIiwiZGVhZGxpbmUiOjMzNTQ1MTQ0MjZ9',
-    //    // uptoken_url: $('#uptoken_url').val(),  //当然建议这种通过url的方式获取token
-    //    domain: 'http://p97k4szaj.bkt.clouddn.com',
-    //    auto_start: false,
-    //    init: {
-    //        'FilesAdded': function(up, files) {
-    //            $('table').show();
-    //            $('#success').hide();
-    //            plupload.each(files, function(file) {
-    //                var progress = new FileProgress(file, 'fsUploadProgress');
-    //                progress.setStatus("等待...");
-    //            });
-    //        },
-    //        'BeforeUpload': function(up, file) {
-    //            var progress = new FileProgress(file, 'fsUploadProgress');
-    //            var chunk_size = plupload.parseSize(this.getOption('chunk_size'));
-    //            if (up.runtime === 'html5' && chunk_size) {
-    //                progress.setChunkProgess(chunk_size);
-    //            }
-    //        },
-    //        'UploadProgress': function(up, file) {
-    //            var progress = new FileProgress(file, 'fsUploadProgress');
-    //            var chunk_size = plupload.parseSize(this.getOption('chunk_size'));
-    //
-    //            progress.setProgress(file.percent + "%", file.speed, chunk_size);
-    //        },
-    //        'UploadComplete': function() {
-    //            $('#success').show();
-    //        },
-    //        'FileUploaded': function(up, file, info) {
-    //            var progress = new FileProgress(file, 'fsUploadProgress');
-    //            progress.setComplete(up, info);
-    //            console.log(info)
-    //        },
-    //        'Error': function(up, err, errTip) {
-    //            $('table').show();
-    //            var progress = new FileProgress(err.file, 'fsUploadProgress');
-    //            progress.setError();
-    //            progress.setStatus(errTip);
-    //        }
-    //    }
-    //});
-
+    console.log( localStorage.platName)
+    if(localStorage.platName == "super"){
+        $("#chooseType").show()
+        $("#chooseID").show()
+    }else if(localStorage.platName == "normal"){
+        $("#chooseType").hide()
+        $("#chooseID").hide()
+    }
 
     $table = $('#table');
     $table.bootstrapTable({
@@ -112,14 +74,14 @@ $().ready(function(){
         pageSize: 10,  //每页显示的记录数
         queryParams: function (params) {
             //页号
-            //param["pageNum"] = params.pageNumber;
-            ////////每页条数
-            //param["pageSize"] = params.pageSize;
+            param["pageNum"] = params.pageNumber;
+            //////每页条数
+            param["pageSize"] = params.pageSize;
             //////排序方式
             //param["orderBy"] = params.sortOrder;
             //额外的参数
-            param["isDelete"] = '0';
-            params["platformId"] = '1'
+            //param["isDelete"] = '0';
+            param["platformId"] = $("#selectID").val()
             return param;
         },
         onLoadError: function(){  //加载失败时执行
@@ -211,6 +173,21 @@ $().ready(function(){
 
     //添加
     $("#addBtn").on("click", function() {
+        //getSelect(url,'platformId','platformName','id')
+        $.ajax({
+            url: "/admin/platform/getPlatformSelect",
+            dataType: "json",
+            success: function (data) {
+            console.log(data)
+            var optArr = [];
+            for (var i = 0; i < data.data.length; i++) {
+                $('#platformId').append("<option value=" + data.data[i].id + ">" + data.data[i].platformName + "</option>");
+              }
+         // 缺一不可
+             $('#platformId').selectpicker('refresh');
+             $('#platformId').selectpicker('render');
+             }
+        });
         if (canSave) {
             alertWarning("请先选择商品类别！");
             return;
@@ -233,6 +210,22 @@ $().ready(function(){
 
     //编辑
     $("#updateBtn").on("click", function () {
+        //getSelect(url,'platformId','platformName','id')
+
+        $.ajax({
+            url: "/admin/platform/getPlatformSelect",
+            dataType: "json",
+            success: function (data) {
+                console.log(data)
+                var optArr = [];
+                for (var i = 0; i < data.data.length; i++) {
+                    $('#platformId').append("<option value=" + data.data[i].id + ">" + data.data[i].platformName + "</option>");
+                }
+                // 缺一不可
+                $('#platformId').selectpicker('refresh');
+                $('#platformId').selectpicker('render');
+            }
+        });
         //获取表格已选择项数组
         var checkArr = $table.bootstrapTable('getSelections');
         if (checkArr.length != 1) {
@@ -305,7 +298,7 @@ var openEdit = function(id){
             $modal.find("#bannerUrl").val(data.data.bannerUrl);
             $modal.find("#note").val(data.data.note);
             $modal.find("#bannerImg").attr("src",data.data.bannerUrl);
-            saveFormValidate();
+            updateFormValidate(id);
             //显示模态框
             showModal($modal);
         },
@@ -362,19 +355,41 @@ var saveFormValidate = function() {
                 }
             });
         },
-        rules: {
-            "bannerName": {
-                required: true,
-                maxlength: 20
-            },
-            "platformId": {
-                required: true,
-            },
-            "bannerUrl": {
-                required: true,
-                maxlength: 200
-            }
-        }
+    });
+}
+
+var updateFormValidate = function(id) {
+    $("#saveModal form").validate({
+        submitHandler: function(form) {
+            $.ajax({
+                url: "/admin/banner/update",
+                type: "post",
+                cache: false,
+                data: {
+                    id:id,
+                    bannerName:$('#bannerName').val(),
+                    platformId: $('#platformId').val(),
+                    bannerUrl:$('#bannerUrl').val(),
+                    note:$('#note').val(),
+                },
+                //dataType: "json",
+                beforeSend: function() {
+                    showLoading();
+                },
+                complete: function() {
+                    removeLoading();
+                },
+                success: function(data) {
+                    $("#saveModal").modal("hide");
+                    //刷新表格
+                    $table.bootstrapTable('refresh', {pageNumber: 1});
+                    alertSuccess("保存成功");
+                },
+                error: function() {
+                    alertWarning();
+                }
+            });
+        },
     });
 }
 

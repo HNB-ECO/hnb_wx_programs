@@ -111,7 +111,7 @@ public class OrderController {
             return orderService.checkExpress(workOrderId);
         }catch (Exception e){
             e.printStackTrace();
-            return new Response(Code.ADD_OR_UPDATE_OBJECT_FAILED);
+            return new Response(Code.SEARCH_NO_EXPRESS);
         }
     }
 

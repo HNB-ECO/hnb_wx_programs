@@ -34,23 +34,25 @@ function showimage(source) {
     $("#ShowImage_Form").modal();
 }
 
-////下拉取值
-//$.ajax({
-//// get请求地址
-//    url: "/admin/goodsType/getGoodsTypeSelect",
-//    data:{ platformId: "1"}, //要发送的数据（参数）格式为{'val1':"1","val2":"2"},
-//    dataType: "json",
-//    success: function (data) {
-//        console.log(data)
-//        var optArr = [];
-//        for (var i = 0; i < data.data.length; i++) {
-//            $('#choose').append("<option value=" + data.data[i].id + ">" + data.data[i].goodTypeName + "</option>");
-//        }
-//        // 缺一不可
-//        $('#choose').selectpicker('refresh');
-//        $('#choose').selectpicker('render');
-//    }
-//});
+$.ajax({
+// get请求地址
+    url: "/admin/platform/getPlatformList",
+    dataType: "json",
+    success: function (data) {
+        console.log("xiala"+data)
+        var optArr = [];
+        for (var i = 0; i < data.data.length; i++) {
+            $('#selectID').append("<option value=" + data.data[i].id + ">" + data.data[i].platformName + "</option>");
+        }
+        // 缺一不可
+        $('#selectID').selectpicker('refresh');
+        $('#selectID').selectpicker('render');
+    }
+});
+
+$("#btnSearch").on('click',function(){
+    $table.bootstrapTable('refresh', {pageNumber: 1});
+})
 
 
 $().ready(function(){
@@ -93,14 +95,14 @@ $().ready(function(){
         pageSize: 10,  //每页显示的记录数
         queryParams: function (params) {
             //页号
-            //param["pageNum"] = params.pageNumber;
-            ////////每页条数
+            param["pageNum"] = params.pageNumber;
+            //////每页条数
             param["pageSize"] = params.pageSize;
             ////////排序方式
             ////param["orderBy"] = params.sortOrder;
             ////额外的参数
-            ////param["nickName"] = "刘翔T恤";
-            //param["platformId"]="1"
+            param["nickName"] = $("#nickName").val();
+            param["platformId"]=$("#selectID").val();
             return param;
         },
         //onLoadSuccess: function(data){  //加载成功时执行

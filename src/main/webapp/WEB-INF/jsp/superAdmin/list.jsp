@@ -63,6 +63,17 @@
   </script>
 </head>
 <body class="gray-bg">
+
+
+*
+<div class="form-group" style="height: 50px">
+  <div class="col-sm-3">
+    <input type="text" class="form-control" id="useName" name="userName" value="" placeholder="请输入管理员查询"/>
+  </div>
+  <div class="col-sm-4">
+    <button type="button" style="margin-left:20px" id="btnSearch"  class="btn btn-primary">查询</button>
+  </div>
+</div>
 <div class="wrapper wrapper-content animated fadeInRight">
   <div class="row">
     <%--<div class="col-sm-3 white-bg">--%>

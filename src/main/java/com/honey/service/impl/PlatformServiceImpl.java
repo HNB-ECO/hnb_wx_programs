@@ -209,5 +209,9 @@ public class PlatformServiceImpl implements PlatformService {
         return platformMapper.selectByExample(example);
     }
 
+    public Platform getPlatformById(Long platformId) {
+        return platformMapper.selectByPrimaryKey(platformId);
+    }
+
 
 }

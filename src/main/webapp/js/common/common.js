@@ -92,11 +92,22 @@ var validatePrettyFile = function($inputAppend, validate) {
 	});
 }
 
+
+function getRight(address,i) { //为String对象增加一个Right方法
+
+	return address.slice(address.length - i, address.length); //返回值为 以“该字符串长度减i”为起始 到 该字符串末尾 的截取字符串
+
+}
+
 //上传背景图片
 function uploadImage(formId,inputId,imgId){
+
 	$("#"+formId).ajaxSubmit({
 		type: "POST",
 		dataType: "json",
+		data:{
+			imageUrl:$("#"+inputId).val().substring(33)
+		},
 		url: "/webservice/upload/uploadImage",
 		success: function (data) {
 			var webUrl = "http://p9mu5lfc8.bkt.clouddn.com/"
@@ -110,5 +121,23 @@ function uploadImage(formId,inputId,imgId){
 			alert("上传失败，请联系系统管理员！");
 		},
 		async: true
+	});
+}
+
+function getSelect(url,id,name,value){
+	$.ajax({
+// get请求地址
+		url:url,
+		dataType: "json",
+		success: function (data) {
+			console.log(data)
+			var optArr = [];
+			for (var i = 0; i < data.data.length; i++) {
+				$('#'+ id ).append("<option value=" + data.data[i].value + ">" + data.data[i].name + "</option>");
+			}
+			// 缺一不可
+			$('#'+ id ).selectpicker('refresh');
+			$('#'+ id ).selectpicker('render');
+		}
 	});
 }

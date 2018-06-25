@@ -36,4 +36,6 @@ public interface UserService {
     Response bindUserWalletAddress(Long userId , String walletAddress);
 
     Response blockUser(String userIds);
+
+    Response loginValidate(Long userId);
 }

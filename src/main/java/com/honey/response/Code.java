@@ -22,6 +22,7 @@ public enum Code {
     PLATFORM_USER_LOGIN_ERROR(1013,"用户名或密码错误,请确认"),
     USER_NOT_ENOUGH_ERROR(1014,"用户积分余额不足，请充值或更换支付方式！"),
     HAVE_NO_PRIVILEGE(1015,"你没有权限，无法进行此操作！"),
+    SEARCH_NO_EXPRESS(1016,"没有找到物流信息！"),
     UPLOAD_IMAGE_FAILED(2000,"上传图片失败");
     ;
 

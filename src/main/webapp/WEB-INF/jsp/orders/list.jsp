@@ -78,7 +78,8 @@
   </style>
 </head>
 <body class="gray-bg">
-<div class="form-group" style="margin-bottom: 40px">
+*
+<div class="form-group" style="margin-bottom: 20px">
   <div class="col-sm-3">
     <input type="text" class="form-control" id="inputWorkNo" name="workNo" value="" placeholder="请输入工单号查询"/>
   </div>
@@ -86,6 +87,9 @@
     <button type="button" style="margin-left:20px" id="btnSearch"  class="btn btn-primary">查询</button>
   </div>
 </div>
+
+
+
 <div class="wrapper wrapper-content animated fadeInRight">
   <div class="row">
     <%--<div class="col-sm-3 white-bg">--%>

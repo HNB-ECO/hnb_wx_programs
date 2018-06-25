@@ -27,6 +27,15 @@ public class GoodsDetailController {
     private GoodDetailService goodDetailService;
 
     /**
+     * 进入商品详情页面
+     * @return
+     */
+    @RequestMapping(value = "/intoGoodsDetailManage", method = RequestMethod.GET)
+    public String intoGoodsDetailManage(HttpServletRequest request){
+        return "/goodsDetail/list";
+    }
+
+    /**
      * 查询商品详情列表
      *
      * @param pageNum  页数

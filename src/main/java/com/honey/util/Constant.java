@@ -58,7 +58,7 @@ public class Constant {
     //微信统一下单接口
     public static final String URL_UNIFIED_ORDER = "https://api.mch.weixin.qq.com/pay/unifiedorder";
     //通知地址，回调接口
-    public static final String DOMAIN = "https://hnb.daolema.me/hnb";//域名正在备案
+    public static final String DOMAIN = "https://hnb.daolema.me";//域名正在备案
     public static final String URL_NOTIFY = DOMAIN + "/webservice/wxPayCallBack/callBack";
     //小程序微信支付接口所用到的参数
     public static final String WX_APP_ID = "wxa6002192b3087ec7";
