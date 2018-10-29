@@ -1,0 +1,226 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.honey.mapper.PlatformMapper" >
+  <resultMap id="BaseResultMap" type="com.honey.entity.Platform" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="platform_name" property="platformName" jdbcType="VARCHAR" />
+    <result column="platform_owner" property="platformOwner" jdbcType="VARCHAR" />
+    <result column="coin" property="coin" jdbcType="DECIMAL" />
+    <result column="withdraw_coin" property="withdrawCoin" jdbcType="DECIMAL" />
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="is_delete" property="isDelete" jdbcType="INTEGER" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <collection property="banners" column="id" fetchType="lazy"
+                javaType="ArrayList" ofType="com.honey.entity.Banner"
+                select="com.honey.mapper.BannerMapper.selectByPlatformId">
+    </collection>
+    <collection property="goodsTypes" column="id" fetchType="lazy"
+                javaType="ArrayList" ofType="com.honey.entity.GoodsType"
+                select="com.honey.mapper.GoodsTypeMapper.selectByPlatformId">
+    </collection>
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, platform_name, platform_owner, coin, withdraw_coin, username, password, is_delete, 
+    create_time, update_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.honey.entity.PlatformExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'false' as QUERYID,
+    <include refid="Base_Column_List" />
+    from platform
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from platform
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from platform
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.honey.entity.Platform" >
+    insert into platform (id, platform_name, platform_owner, 
+      coin, withdraw_coin, username, 
+      password, is_delete, create_time, 
+      update_time)
+    values (#{id,jdbcType=BIGINT}, #{platformName,jdbcType=VARCHAR}, #{platformOwner,jdbcType=VARCHAR}, 
+      #{coin,jdbcType=DECIMAL}, #{withdrawCoin,jdbcType=DECIMAL}, #{username,jdbcType=VARCHAR}, 
+      #{password,jdbcType=VARCHAR}, #{isDelete,jdbcType=INTEGER}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.honey.entity.Platform" >
+    insert into platform
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="platformName != null" >
+        platform_name,
+      </if>
+      <if test="platformOwner != null" >
+        platform_owner,
+      </if>
+      <if test="coin != null" >
+        coin,
+      </if>
+      <if test="withdrawCoin != null" >
+        withdraw_coin,
+      </if>
+      <if test="username != null" >
+        username,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="isDelete != null" >
+        is_delete,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="platformName != null" >
+        #{platformName,jdbcType=VARCHAR},
+      </if>
+      <if test="platformOwner != null" >
+        #{platformOwner,jdbcType=VARCHAR},
+      </if>
+      <if test="coin != null" >
+        #{coin,jdbcType=DECIMAL},
+      </if>
+      <if test="withdrawCoin != null" >
+        #{withdrawCoin,jdbcType=DECIMAL},
+      </if>
+      <if test="username != null" >
+        #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="isDelete != null" >
+        #{isDelete,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.honey.entity.PlatformExample" resultType="java.lang.Integer" >
+    select count(*) from platform
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByPrimaryKeySelective" parameterType="com.honey.entity.Platform" >
+    update platform
+    <set >
+      <if test="platformName != null" >
+        platform_name = #{platformName,jdbcType=VARCHAR},
+      </if>
+      <if test="platformOwner != null" >
+        platform_owner = #{platformOwner,jdbcType=VARCHAR},
+      </if>
+      <if test="coin != null" >
+        coin = #{coin,jdbcType=DECIMAL},
+      </if>
+      <if test="withdrawCoin != null" >
+        withdraw_coin = #{withdrawCoin,jdbcType=DECIMAL},
+      </if>
+      <if test="username != null" >
+        username = #{username,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="isDelete != null" >
+        is_delete = #{isDelete,jdbcType=INTEGER},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.honey.entity.Platform" >
+    update platform
+    set platform_name = #{platformName,jdbcType=VARCHAR},
+      platform_owner = #{platformOwner,jdbcType=VARCHAR},
+      coin = #{coin,jdbcType=DECIMAL},
+      withdraw_coin = #{withdrawCoin,jdbcType=DECIMAL},
+      username = #{username,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      is_delete = #{isDelete,jdbcType=INTEGER},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="getPlatformMain" resultMap="BaseResultMap" parameterType="Long">
+    select id,platform_name,platform_owner from platform p where 1 = 1 and p.id=#{id} and is_delete = 0
+  </select>
+
+  <resultMap id="IdAndNameList" type="map">
+    <result property="id" column="id" />
+    <result property="platformName" column="platform_name" />
+  </resultMap>
+  <select id="selectPlatformIdAndName" resultMap="IdAndNameList" >
+    SELECT id,platform_name
+    FROM platform
+    where 1 = 1 and is_delete = 0
+    order by id
+  </select>
+</mapper>

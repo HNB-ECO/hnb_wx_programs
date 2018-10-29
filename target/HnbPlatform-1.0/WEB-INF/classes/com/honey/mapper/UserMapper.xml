@@ -1,0 +1,336 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.honey.mapper.UserMapper" >
+  <resultMap id="BaseResultMap" type="com.honey.entity.User" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="nick_name" property="nickName" jdbcType="VARCHAR" />
+    <result column="avatar" property="avatar" jdbcType="VARCHAR" />
+    <result column="third_part_id" property="thirdPartId" jdbcType="VARCHAR" />
+    <result column="third_part_type" property="thirdPartType" jdbcType="VARCHAR" />
+    <result column="platform_id" property="platformId" jdbcType="BIGINT" />
+    <result column="platform_key" property="platformKey" jdbcType="VARCHAR" />
+    <result column="password" property="password" jdbcType="VARCHAR" />
+    <result column="last_login_time" property="lastLoginTime" jdbcType="TIMESTAMP" />
+    <result column="last_login_type" property="lastLoginType" jdbcType="VARCHAR" />
+    <result column="is_delete" property="isDelete" jdbcType="INTEGER" />
+    <result column="status" property="status" jdbcType="INTEGER" />
+    <result column="coin_balance" property="coinBalance" jdbcType="DECIMAL" />
+    <result column="balance" property="balance" jdbcType="DECIMAL" />
+    <result column="is_token_need_clean" property="isTokenNeedClean" jdbcType="TINYINT" />
+    <result column="wallet_address" property="walletAddress" jdbcType="VARCHAR" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+    <collection property="userAddresses" column="id" fetchType="lazy"
+                javaType="ArrayList" ofType="com.honey.entity.UserAddress"
+                select="com.honey.mapper.UserAddressMapper.selectByUserId">
+    </collection>
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, phone, nick_name, avatar, third_part_id, third_part_type, platform_id, platform_key, 
+    password, last_login_time, last_login_type, is_delete, status, coin_balance, balance, 
+    is_token_need_clean, wallet_address, create_time, update_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.honey.entity.UserExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'false' as QUERYID,
+    <include refid="Base_Column_List" />
+    from user
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from user
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from user
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.honey.entity.User" >
+    insert into user (id, phone, nick_name, 
+      avatar, third_part_id, third_part_type, 
+      platform_id, platform_key, password, 
+      last_login_time, last_login_type, is_delete, 
+      status, coin_balance, balance, 
+      is_token_need_clean, wallet_address, create_time, 
+      update_time)
+    values (#{id,jdbcType=BIGINT}, #{phone,jdbcType=VARCHAR}, #{nickName,jdbcType=VARCHAR}, 
+      #{avatar,jdbcType=VARCHAR}, #{thirdPartId,jdbcType=VARCHAR}, #{thirdPartType,jdbcType=VARCHAR}, 
+      #{platformId,jdbcType=BIGINT}, #{platformKey,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR}, 
+      #{lastLoginTime,jdbcType=TIMESTAMP}, #{lastLoginType,jdbcType=VARCHAR}, #{isDelete,jdbcType=INTEGER}, 
+      #{status,jdbcType=INTEGER}, #{coinBalance,jdbcType=DECIMAL}, #{balance,jdbcType=DECIMAL}, 
+      #{isTokenNeedClean,jdbcType=TINYINT}, #{walletAddress,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP}, 
+      #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.honey.entity.User" >
+    insert into user
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="phone != null" >
+        phone,
+      </if>
+      <if test="nickName != null" >
+        nick_name,
+      </if>
+      <if test="avatar != null" >
+        avatar,
+      </if>
+      <if test="thirdPartId != null" >
+        third_part_id,
+      </if>
+      <if test="thirdPartType != null" >
+        third_part_type,
+      </if>
+      <if test="platformId != null" >
+        platform_id,
+      </if>
+      <if test="platformKey != null" >
+        platform_key,
+      </if>
+      <if test="password != null" >
+        password,
+      </if>
+      <if test="lastLoginTime != null" >
+        last_login_time,
+      </if>
+      <if test="lastLoginType != null" >
+        last_login_type,
+      </if>
+      <if test="isDelete != null" >
+        is_delete,
+      </if>
+      <if test="status != null" >
+        status,
+      </if>
+      <if test="coinBalance != null" >
+        coin_balance,
+      </if>
+      <if test="balance != null" >
+        balance,
+      </if>
+      <if test="isTokenNeedClean != null" >
+        is_token_need_clean,
+      </if>
+      <if test="walletAddress != null" >
+        wallet_address,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="phone != null" >
+        #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="nickName != null" >
+        #{nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="avatar != null" >
+        #{avatar,jdbcType=VARCHAR},
+      </if>
+      <if test="thirdPartId != null" >
+        #{thirdPartId,jdbcType=VARCHAR},
+      </if>
+      <if test="thirdPartType != null" >
+        #{thirdPartType,jdbcType=VARCHAR},
+      </if>
+      <if test="platformId != null" >
+        #{platformId,jdbcType=BIGINT},
+      </if>
+      <if test="platformKey != null" >
+        #{platformKey,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="lastLoginTime != null" >
+        #{lastLoginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastLoginType != null" >
+        #{lastLoginType,jdbcType=VARCHAR},
+      </if>
+      <if test="isDelete != null" >
+        #{isDelete,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        #{status,jdbcType=INTEGER},
+      </if>
+      <if test="coinBalance != null" >
+        #{coinBalance,jdbcType=DECIMAL},
+      </if>
+      <if test="balance != null" >
+        #{balance,jdbcType=DECIMAL},
+      </if>
+      <if test="isTokenNeedClean != null" >
+        #{isTokenNeedClean,jdbcType=TINYINT},
+      </if>
+      <if test="walletAddress != null" >
+        #{walletAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.honey.entity.UserExample" resultType="java.lang.Integer" >
+    select count(*) from user
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByPrimaryKeySelective" parameterType="com.honey.entity.User" >
+    update user
+    <set >
+      <if test="phone != null" >
+        phone = #{phone,jdbcType=VARCHAR},
+      </if>
+      <if test="nickName != null" >
+        nick_name = #{nickName,jdbcType=VARCHAR},
+      </if>
+      <if test="avatar != null" >
+        avatar = #{avatar,jdbcType=VARCHAR},
+      </if>
+      <if test="thirdPartId != null" >
+        third_part_id = #{thirdPartId,jdbcType=VARCHAR},
+      </if>
+      <if test="thirdPartType != null" >
+        third_part_type = #{thirdPartType,jdbcType=VARCHAR},
+      </if>
+      <if test="platformId != null" >
+        platform_id = #{platformId,jdbcType=BIGINT},
+      </if>
+      <if test="platformKey != null" >
+        platform_key = #{platformKey,jdbcType=VARCHAR},
+      </if>
+      <if test="password != null" >
+        password = #{password,jdbcType=VARCHAR},
+      </if>
+      <if test="lastLoginTime != null" >
+        last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="lastLoginType != null" >
+        last_login_type = #{lastLoginType,jdbcType=VARCHAR},
+      </if>
+      <if test="isDelete != null" >
+        is_delete = #{isDelete,jdbcType=INTEGER},
+      </if>
+      <if test="status != null" >
+        status = #{status,jdbcType=INTEGER},
+      </if>
+      <if test="coinBalance != null" >
+        coin_balance = #{coinBalance,jdbcType=DECIMAL},
+      </if>
+      <if test="balance != null" >
+        balance = #{balance,jdbcType=DECIMAL},
+      </if>
+      <if test="isTokenNeedClean != null" >
+        is_token_need_clean = #{isTokenNeedClean,jdbcType=TINYINT},
+      </if>
+      <if test="walletAddress != null" >
+        wallet_address = #{walletAddress,jdbcType=VARCHAR},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.honey.entity.User" >
+    update user
+    set phone = #{phone,jdbcType=VARCHAR},
+      nick_name = #{nickName,jdbcType=VARCHAR},
+      avatar = #{avatar,jdbcType=VARCHAR},
+      third_part_id = #{thirdPartId,jdbcType=VARCHAR},
+      third_part_type = #{thirdPartType,jdbcType=VARCHAR},
+      platform_id = #{platformId,jdbcType=BIGINT},
+      platform_key = #{platformKey,jdbcType=VARCHAR},
+      password = #{password,jdbcType=VARCHAR},
+      last_login_time = #{lastLoginTime,jdbcType=TIMESTAMP},
+      last_login_type = #{lastLoginType,jdbcType=VARCHAR},
+      is_delete = #{isDelete,jdbcType=INTEGER},
+      status = #{status,jdbcType=INTEGER},
+      coin_balance = #{coinBalance,jdbcType=DECIMAL},
+      balance = #{balance,jdbcType=DECIMAL},
+      is_token_need_clean = #{isTokenNeedClean,jdbcType=TINYINT},
+      wallet_address = #{walletAddress,jdbcType=VARCHAR},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+
+  <select id="getUserWithAddresses" resultMap="BaseResultMap" parameterType="Long">
+    select id,avatar,third_part_id,third_part_type,platform_id,coin_balance,balance,wallet_address
+    from user u
+    where 1 = 1 and u.id=#{id}
+  </select>
+
+  <insert id="insertBackId" parameterType="com.honey.entity.User" useGeneratedKeys="true" keyProperty="id">
+    insert into user (id, phone, nick_name,
+      avatar, third_part_id, third_part_type,
+      platform_id, platform_key, password,
+      last_login_time, last_login_type, is_delete,
+      status, coin_balance, balance,
+      is_token_need_clean, wallet_address, create_time,
+      update_time)
+    values (#{id,jdbcType=BIGINT}, #{phone,jdbcType=VARCHAR}, #{nickName,jdbcType=VARCHAR},
+      #{avatar,jdbcType=VARCHAR}, #{thirdPartId,jdbcType=VARCHAR}, #{thirdPartType,jdbcType=VARCHAR},
+      #{platformId,jdbcType=BIGINT}, #{platformKey,jdbcType=VARCHAR}, #{password,jdbcType=VARCHAR},
+      #{lastLoginTime,jdbcType=TIMESTAMP}, #{lastLoginType,jdbcType=VARCHAR}, #{isDelete,jdbcType=INTEGER},
+      #{status,jdbcType=INTEGER}, #{coinBalance,jdbcType=DECIMAL}, #{balance,jdbcType=DECIMAL},
+      #{isTokenNeedClean,jdbcType=TINYINT}, #{walletAddress,jdbcType=VARCHAR}, #{createTime,jdbcType=TIMESTAMP},
+      #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+</mapper>

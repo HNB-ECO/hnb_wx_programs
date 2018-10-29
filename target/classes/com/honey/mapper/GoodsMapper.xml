@@ -1,0 +1,316 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.honey.mapper.GoodsMapper" >
+  <resultMap id="BaseResultMap" type="com.honey.entity.Goods" >
+    <id column="id" property="id" jdbcType="BIGINT" />
+    <result column="name" property="name" jdbcType="VARCHAR" />
+    <result column="short_name" property="shortName" jdbcType="VARCHAR" />
+    <result column="good_type_id" property="goodTypeId" jdbcType="BIGINT" />
+    <result column="platform_id" property="platformId" jdbcType="BIGINT" />
+    <result column="ranking" property="ranking" jdbcType="INTEGER" />
+    <result column="view_count" property="viewCount" jdbcType="BIGINT" />
+    <result column="unit" property="unit" jdbcType="VARCHAR" />
+    <result column="acc_pay" property="accPay" jdbcType="INTEGER" />
+    <result column="image_url" property="imageUrl" jdbcType="VARCHAR" />
+    <result column="info_url" property="infoUrl" jdbcType="VARCHAR" />
+    <result column="price" property="price" jdbcType="DECIMAL" />
+    <result column="coin_price" property="coinPrice" jdbcType="DECIMAL" />
+    <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
+    <result column="is_delete" property="isDelete" jdbcType="INTEGER" />
+    <result column="sales" property="sales" jdbcType="BIGINT" />
+    <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    id, name, short_name, good_type_id, platform_id, ranking, view_count, unit, acc_pay, 
+    image_url, info_url, price, coin_price, create_time, is_delete, sales, update_time
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.honey.entity.GoodsExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    'false' as QUERYID,
+    <include refid="Base_Column_List" />
+    from goods
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+    select 
+    <include refid="Base_Column_List" />
+    from goods
+    where id = #{id,jdbcType=BIGINT}
+  </select>
+  <delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from goods
+    where id = #{id,jdbcType=BIGINT}
+  </delete>
+  <insert id="insert" parameterType="com.honey.entity.Goods" >
+    insert into goods (id, name, short_name, 
+      good_type_id, platform_id, ranking, 
+      view_count, unit, acc_pay, 
+      image_url, info_url, price, 
+      coin_price, create_time, is_delete, 
+      sales, update_time)
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{shortName,jdbcType=VARCHAR}, 
+      #{goodTypeId,jdbcType=BIGINT}, #{platformId,jdbcType=BIGINT}, #{ranking,jdbcType=INTEGER}, 
+      #{viewCount,jdbcType=BIGINT}, #{unit,jdbcType=VARCHAR}, #{accPay,jdbcType=INTEGER}, 
+      #{imageUrl,jdbcType=VARCHAR}, #{infoUrl,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL}, 
+      #{coinPrice,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP}, #{isDelete,jdbcType=INTEGER}, 
+      #{sales,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+  <insert id="insertSelective" parameterType="com.honey.entity.Goods" >
+    insert into goods
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        id,
+      </if>
+      <if test="name != null" >
+        name,
+      </if>
+      <if test="shortName != null" >
+        short_name,
+      </if>
+      <if test="goodTypeId != null" >
+        good_type_id,
+      </if>
+      <if test="platformId != null" >
+        platform_id,
+      </if>
+      <if test="ranking != null" >
+        ranking,
+      </if>
+      <if test="viewCount != null" >
+        view_count,
+      </if>
+      <if test="unit != null" >
+        unit,
+      </if>
+      <if test="accPay != null" >
+        acc_pay,
+      </if>
+      <if test="imageUrl != null" >
+        image_url,
+      </if>
+      <if test="infoUrl != null" >
+        info_url,
+      </if>
+      <if test="price != null" >
+        price,
+      </if>
+      <if test="coinPrice != null" >
+        coin_price,
+      </if>
+      <if test="createTime != null" >
+        create_time,
+      </if>
+      <if test="isDelete != null" >
+        is_delete,
+      </if>
+      <if test="sales != null" >
+        sales,
+      </if>
+      <if test="updateTime != null" >
+        update_time,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="id != null" >
+        #{id,jdbcType=BIGINT},
+      </if>
+      <if test="name != null" >
+        #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="shortName != null" >
+        #{shortName,jdbcType=VARCHAR},
+      </if>
+      <if test="goodTypeId != null" >
+        #{goodTypeId,jdbcType=BIGINT},
+      </if>
+      <if test="platformId != null" >
+        #{platformId,jdbcType=BIGINT},
+      </if>
+      <if test="ranking != null" >
+        #{ranking,jdbcType=INTEGER},
+      </if>
+      <if test="viewCount != null" >
+        #{viewCount,jdbcType=BIGINT},
+      </if>
+      <if test="unit != null" >
+        #{unit,jdbcType=VARCHAR},
+      </if>
+      <if test="accPay != null" >
+        #{accPay,jdbcType=INTEGER},
+      </if>
+      <if test="imageUrl != null" >
+        #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="infoUrl != null" >
+        #{infoUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="coinPrice != null" >
+        #{coinPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isDelete != null" >
+        #{isDelete,jdbcType=INTEGER},
+      </if>
+      <if test="sales != null" >
+        #{sales,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null" >
+        #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.honey.entity.GoodsExample" resultType="java.lang.Integer" >
+    select count(*) from goods
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByPrimaryKeySelective" parameterType="com.honey.entity.Goods" >
+    update goods
+    <set >
+      <if test="name != null" >
+        name = #{name,jdbcType=VARCHAR},
+      </if>
+      <if test="shortName != null" >
+        short_name = #{shortName,jdbcType=VARCHAR},
+      </if>
+      <if test="goodTypeId != null" >
+        good_type_id = #{goodTypeId,jdbcType=BIGINT},
+      </if>
+      <if test="platformId != null" >
+        platform_id = #{platformId,jdbcType=BIGINT},
+      </if>
+      <if test="ranking != null" >
+        ranking = #{ranking,jdbcType=INTEGER},
+      </if>
+      <if test="viewCount != null" >
+        view_count = #{viewCount,jdbcType=BIGINT},
+      </if>
+      <if test="unit != null" >
+        unit = #{unit,jdbcType=VARCHAR},
+      </if>
+      <if test="accPay != null" >
+        acc_pay = #{accPay,jdbcType=INTEGER},
+      </if>
+      <if test="imageUrl != null" >
+        image_url = #{imageUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="infoUrl != null" >
+        info_url = #{infoUrl,jdbcType=VARCHAR},
+      </if>
+      <if test="price != null" >
+        price = #{price,jdbcType=DECIMAL},
+      </if>
+      <if test="coinPrice != null" >
+        coin_price = #{coinPrice,jdbcType=DECIMAL},
+      </if>
+      <if test="createTime != null" >
+        create_time = #{createTime,jdbcType=TIMESTAMP},
+      </if>
+      <if test="isDelete != null" >
+        is_delete = #{isDelete,jdbcType=INTEGER},
+      </if>
+      <if test="sales != null" >
+        sales = #{sales,jdbcType=BIGINT},
+      </if>
+      <if test="updateTime != null" >
+        update_time = #{updateTime,jdbcType=TIMESTAMP},
+      </if>
+    </set>
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <update id="updateByPrimaryKey" parameterType="com.honey.entity.Goods" >
+    update goods
+    set name = #{name,jdbcType=VARCHAR},
+      short_name = #{shortName,jdbcType=VARCHAR},
+      good_type_id = #{goodTypeId,jdbcType=BIGINT},
+      platform_id = #{platformId,jdbcType=BIGINT},
+      ranking = #{ranking,jdbcType=INTEGER},
+      view_count = #{viewCount,jdbcType=BIGINT},
+      unit = #{unit,jdbcType=VARCHAR},
+      acc_pay = #{accPay,jdbcType=INTEGER},
+      image_url = #{imageUrl,jdbcType=VARCHAR},
+      info_url = #{infoUrl,jdbcType=VARCHAR},
+      price = #{price,jdbcType=DECIMAL},
+      coin_price = #{coinPrice,jdbcType=DECIMAL},
+      create_time = #{createTime,jdbcType=TIMESTAMP},
+      is_delete = #{isDelete,jdbcType=INTEGER},
+      sales = #{sales,jdbcType=BIGINT},
+      update_time = #{updateTime,jdbcType=TIMESTAMP}
+    where id = #{id,jdbcType=BIGINT}
+  </update>
+  <select id="selectByGoodTypeId" resultMap="BaseResultMap" parameterType="Long" >
+    SELECT id,name,short_name,good_type_id,platform_id,ranking,view_count,unit,image_url,info_url,price,coin_price,acc_pay,sales
+    FROM goods
+    where 1 = 1 and is_delete = 0 and good_type_id = #{0}
+    order by ranking LIMIT 5
+  </select>
+  <insert id="insertIdBack" parameterType="com.honey.entity.Goods" useGeneratedKeys="true" keyProperty="id">
+    insert into goods (id, name, short_name,
+    good_type_id, platform_id, ranking,
+    view_count, unit, acc_pay,
+    image_url, info_url, price,
+    coin_price, create_time, is_delete,
+    sales, update_time)
+    values (#{id,jdbcType=BIGINT}, #{name,jdbcType=VARCHAR}, #{shortName,jdbcType=VARCHAR},
+    #{goodTypeId,jdbcType=BIGINT}, #{platformId,jdbcType=BIGINT}, #{ranking,jdbcType=INTEGER},
+    #{viewCount,jdbcType=BIGINT}, #{unit,jdbcType=VARCHAR}, #{accPay,jdbcType=INTEGER},
+    #{imageUrl,jdbcType=VARCHAR}, #{infoUrl,jdbcType=VARCHAR}, #{price,jdbcType=DECIMAL},
+    #{coinPrice,jdbcType=DECIMAL}, #{createTime,jdbcType=TIMESTAMP}, #{isDelete,jdbcType=INTEGER},
+    #{sales,jdbcType=BIGINT}, #{updateTime,jdbcType=TIMESTAMP})
+  </insert>
+
+  <select id="sumGoodSales" parameterType="java.lang.Long" resultType="java.lang.Long" >
+    select sum(sales) from goods WHERE 1 = 1 AND is_delete = 0 AND id = #{0}
+  </select>
+
+  <update id="userDeleteGoodsByGoodsType" parameterType="java.lang.Long" >
+    update goods
+    set
+    is_delete = 1,
+    update_time = sysdate()
+    where good_type_id = #{0}
+  </update>
+</mapper>
